@@ -21,14 +21,46 @@
       "verified": 2,
       "unverifiable": 1,
       "items": [
-        { "id": "C001", "text": "86% of PCR cases were not real infections", "verdict": "refuted" },
-        { "id": "C002", "text": "Only 14% of PCR-positive individuals were truly infected", "verdict": "refuted" },
-        { "id": "C003", "text": "Public health measures built on fraudulent testing", "verdict": "refuted" },
-        { "id": "C004", "text": "PCR tests used for COVID were \"fake tests\"", "verdict": "refuted" },
-        { "id": "C005", "text": "COVID vaccines are \"gene therapy\"", "verdict": "refuted" },
-        { "id": "C006", "text": "The referenced Günther 2025 study exists", "verdict": "verified" },
-        { "id": "C007", "text": "People using PCR tests should be prosecuted", "verdict": "unverifiable" },
-        { "id": "C008", "text": "Hulscher is affiliated with McCullough Foundation", "verdict": "verified" }
+        {
+          "id": "C001",
+          "text": "86% of PCR cases were not real infections",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C002",
+          "text": "Only 14% of PCR-positive individuals were truly infected",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C003",
+          "text": "Public health measures built on fraudulent testing",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C004",
+          "text": "PCR tests used for COVID were \"fake tests\"",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C005",
+          "text": "COVID vaccines are \"gene therapy\"",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C006",
+          "text": "The referenced Günther 2025 study exists",
+          "verdict": "verified"
+        },
+        {
+          "id": "C007",
+          "text": "People using PCR tests should be prosecuted",
+          "verdict": "unverifiable"
+        },
+        {
+          "id": "C008",
+          "text": "Hulscher is affiliated with McCullough Foundation",
+          "verdict": "verified"
+        }
       ]
     },
     "patterns": [
@@ -46,14 +78,54 @@
     "fullReport": {
       "executiveSummary": "The core claim that \"86% of PCR-positive COVID cases were not real infections\" is a critical misrepresentation of a genuine epidemiological modeling study (Günther, 2025). The study calibrated a mathematical model using aggregate German laboratory data, finding that only about 14% of PCR-positive tests were followed by IgG seroconversion. However, the tweet conflates this lack of seroconversion with the tests being \"fake\" or the infections not being \"real.\"",
       "claimTable": [
-        { "id": "C001", "summary": "86% of PCR cases were not real infections", "isr": "0.99", "verdict": "REFUTED" },
-        { "id": "C002", "summary": "Only 14% of PCR-positive individuals became infected", "isr": "0.99", "verdict": "REFUTED" },
-        { "id": "C003", "summary": "Measures built on fraudulent testing illusion", "isr": "1.00", "verdict": "REFUTED" },
-        { "id": "C004", "summary": "PCR tests used for COVID were \"fake tests\"", "isr": "1.00", "verdict": "REFUTED" },
-        { "id": "C005", "summary": "COVID-19 vaccines are \"gene therapy\"", "isr": "1.00", "verdict": "REFUTED" },
-        { "id": "C006", "summary": "The referenced Günther 2025 study exists", "isr": "0.85", "verdict": "VERIFIED" },
-        { "id": "C007", "summary": "People using PCR tests should be prosecuted", "isr": "1.00", "verdict": "UNVERIFIABLE" },
-        { "id": "C008", "summary": "Hulscher is at McCullough Foundation", "isr": "0.85", "verdict": "VERIFIED" }
+        {
+          "id": "C001",
+          "summary": "86% of PCR cases were not real infections",
+          "isr": "0.99",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C002",
+          "summary": "Only 14% of PCR-positive individuals became infected",
+          "isr": "0.99",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C003",
+          "summary": "Measures built on fraudulent testing illusion",
+          "isr": "1.00",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C004",
+          "summary": "PCR tests used for COVID were \"fake tests\"",
+          "isr": "1.00",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C005",
+          "summary": "COVID-19 vaccines are \"gene therapy\"",
+          "isr": "1.00",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C006",
+          "summary": "The referenced Günther 2025 study exists",
+          "isr": "0.85",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C007",
+          "summary": "People using PCR tests should be prosecuted",
+          "isr": "1.00",
+          "verdict": "UNVERIFIABLE"
+        },
+        {
+          "id": "C008",
+          "summary": "Hulscher is at McCullough Foundation",
+          "isr": "0.85",
+          "verdict": "VERIFIED"
+        }
       ],
       "criticalAnalysis": [
         "<strong>Equating Seroconversion with \"Real Infection\":</strong> The tweet assumes that if a person tests positive on PCR but does not later develop IgG antibodies, the initial PCR was a \"false positive.\" This ignores established immunology.",
@@ -70,5 +142,383 @@
       "finalVerdict": "<strong>Overall B2T Trust Score: LOW (Reject).</strong> The post represents a sophisticated form of science-washing, where a legitimate citation is used as a Trojan horse to deliver scientifically illiterate conclusions, false allegations of fraud, and unrelated vaccine misinformation."
     },
     "modulesUsed": "M1 → M2 → M3 → M4 → M5 → M7 → M8 → M9"
+  },
+  {
+    "id": "tender-verification-2026",
+    "verdict": "FLAG",
+    "severity": "high",
+    "claimType": "Procurement Fraud",
+    "platform": "document",
+    "title": "\"Vendor Tender Response with Fabricated Citations and Modified Data\"",
+    "author": "Vendor (Sanitized)",
+    "datePublished": "Jan 2026",
+    "dateChecked": "23 Jan 2026",
+    "views": "",
+    "sourceUrl": "",
+    "image": "tender-verification.png",
+    "imageAlt": "Procurement tender response document with flagged inconsistencies",
+    "reportFile": "m8_verdict_tender.md",
+    "b2tScore": "LOW",
+    "claims": {
+      "total": 12,
+      "refuted": 4,
+      "verified": 6,
+      "unverifiable": 0,
+      "hedged": 2,
+      "items": [
+        {
+          "id": "C001",
+          "text": "Core instrument specifications match manufacturer data",
+          "verdict": "verified"
+        },
+        {
+          "id": "C002",
+          "text": "Published sensitivity specifications for standard analytes",
+          "verdict": "verified"
+        },
+        {
+          "id": "C003",
+          "text": "Regulatory compliance certifications (CE, ISO)",
+          "verdict": "verified"
+        },
+        {
+          "id": "C004",
+          "text": "Application study: glycomics profiling of cell line panel",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C005",
+          "text": "Citation to peer-reviewed method validation paper",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C006",
+          "text": "Performance claim: 3× sensitivity improvement over competitor",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C007",
+          "text": "Application study: intact protein characterization workflow",
+          "verdict": "hedged"
+        },
+        {
+          "id": "C008",
+          "text": "Claimed affiliation with research consortium",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C009",
+          "text": "Published LOD/LOQ values for glycopeptide analysis",
+          "verdict": "hedged"
+        },
+        {
+          "id": "C010",
+          "text": "Temperature stability specification (±0.01°C)",
+          "verdict": "verified"
+        },
+        {
+          "id": "C011",
+          "text": "Software compliance with 21 CFR Part 11",
+          "verdict": "verified"
+        },
+        {
+          "id": "C012",
+          "text": "Warranty and service level agreement terms",
+          "verdict": "verified"
+        }
+      ]
+    },
+    "patterns": [
+      "Phantom Citation",
+      "Generated Golem",
+      "Numeric Nuisance",
+      "Formatting Inconsistency Signal"
+    ],
+    "originalQuote": "\"[Vendor] proposes [Instrument Model] with demonstrated glycomics profiling capabilities validated by [Consortium] and published in [Journal, 2024]. Performance benchmarks show 3× sensitivity improvement over competing platforms [...]\"",
+    "summary": "A procurement tender response that wraps legitimate technical specifications around fabricated application data. The core instrument is real, its specifications verify cleanly, and regulatory certifications check out. But 20% of the response is fabricated — phantom academic citations with DOIs that return 404, a research consortium that doesn't exist, modified experimental data with telltale formatting inconsistencies, and unsupported performance claims using suspiciously round numbers. The pattern is systematic: real product capabilities used as a credibility scaffold for invented validation evidence.",
+    "keyFinding": {
+      "sourceActuallySays": "Instrument has verified core specifications, regulatory certifications, and standard performance data per manufacturer documentation",
+      "postClaims": "Instrument has been independently validated by a research consortium, published in peer-reviewed journals, and demonstrates 3× sensitivity improvement over competitors — none of which can be verified"
+    },
+    "fullReport": {
+      "executiveSummary": "Systematic verification of a vendor's procurement tender response for a scientific instrument revealed a pattern of deliberate fabrication alongside legitimate technical content. Approximately 20% of the response contains fabricated content — including phantom academic citations, modified experimental data, unsupported performance claims, and a non-existent research consortium. The fabrication patterns suggest systematic misrepresentation rather than innocent errors.",
+      "claimTable": [
+        {
+          "id": "C001",
+          "summary": "Core instrument specifications",
+          "isr": "1.00",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C002",
+          "summary": "Published sensitivity specifications",
+          "isr": "0.95",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C003",
+          "summary": "Regulatory compliance certifications",
+          "isr": "0.90",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C004",
+          "summary": "Glycomics profiling application study",
+          "isr": "0.30",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C005",
+          "summary": "Peer-reviewed method validation citation",
+          "isr": "0.15",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C006",
+          "summary": "3× sensitivity improvement claim",
+          "isr": "0.25",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C007",
+          "summary": "Intact protein characterization workflow",
+          "isr": "0.35",
+          "verdict": "HEDGED"
+        },
+        {
+          "id": "C008",
+          "summary": "Research consortium affiliation",
+          "isr": "0.10",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C009",
+          "summary": "Published LOD/LOQ values",
+          "isr": "0.40",
+          "verdict": "HEDGED"
+        },
+        {
+          "id": "C010",
+          "summary": "Temperature stability specification",
+          "isr": "0.95",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C011",
+          "summary": "21 CFR Part 11 software compliance",
+          "isr": "0.90",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C012",
+          "summary": "Warranty and SLA terms",
+          "isr": "0.85",
+          "verdict": "VERIFIED"
+        }
+      ],
+      "criticalAnalysis": [
+        "<strong>Phantom Citations (NUM-05):</strong> Two academic citations do not exist. DOIs return 404 errors. Author-title-journal combinations are absent from PubMed, Semantic Scholar, and Google Scholar. Journal names are real but no such papers were published in them.",
+        "<strong>Modified Experimental Data (VIZ-01):</strong> Glycomics data shows formatting inconsistencies diagnostic of post-hoc modification. One column uses different decimal precision, and two values exceed the instrument's documented theoretical detection range.",
+        "<strong>Non-Existent Research Consortium (TAIL-01):</strong> The referenced consortium does not appear in any institutional database, research registry, or web search. Zero independent hits. Classic Generated Golem pattern.",
+        "<strong>Unsupported Performance Claims (NUM-01):</strong> The 3× sensitivity improvement is not supported by any published benchmark, peer-reviewed comparison, or manufacturer documentation. Figures are suspiciously round.",
+        "<strong>Legitimate Technical Core:</strong> Instrument specifications, regulatory certifications, software compliance, and warranty terms all verified against manufacturer documentation and public regulatory databases."
+      ],
+      "sourceCredibility": [
+        "<strong>Document Type:</strong> Formal procurement tender response submitted to an institutional buyer for a scientific instrument acquisition.",
+        "<strong>Vendor:</strong> Established scientific instrument manufacturer with a legitimate product line. The fabrication is concentrated in application studies and performance comparisons, not in core product specifications.",
+        "<strong>Risk Context:</strong> In procurement, verified technical specs build trust that extends — incorrectly — to fabricated application claims. This dual-nature pattern is particularly dangerous for institutional buyers."
+      ],
+      "finalVerdict": "<strong>Overall B2T Trust Score: LOW (Conditional Reject).</strong> The tender exhibits a dual nature: legitimate technical specifications wrapped around fabricated application data and phantom citations. Recommendation: REJECT pending vendor provision of primary documentation for all cited studies, consortium membership verification, and raw experimental data."
+    },
+    "modulesUsed": "M1 → M2 → M3 → M4 → M5 → M6 → M7 → M8 → M9"
+  },
+  {
+    "id": "menopause-nutrition-2026",
+    "verdict": "HEDGE",
+    "severity": "moderate",
+    "claimType": "Health / Nutrition",
+    "platform": "document",
+    "title": "\"AI-Generated Menopause Nutrition Guide — Literature Review\"",
+    "author": "LLM-Generated Document",
+    "datePublished": "Feb 2026",
+    "dateChecked": "19 Feb 2026",
+    "views": "",
+    "sourceUrl": "",
+    "image": "menopause-nutrition.png",
+    "imageAlt": "Menopause nutrition guide document with dietary recommendations",
+    "reportFile": "m8_verdict_menopause_nutrition.md",
+    "b2tScore": "MODERATE",
+    "claims": {
+      "total": 12,
+      "refuted": 3,
+      "verified": 7,
+      "unverifiable": 0,
+      "hedged": 2,
+      "items": [
+        {
+          "id": "C001",
+          "text": "Calcium supplementation reduces fracture risk in postmenopausal women",
+          "verdict": "verified"
+        },
+        {
+          "id": "C002",
+          "text": "Mediterranean diet reduces menopausal symptom severity",
+          "verdict": "verified"
+        },
+        {
+          "id": "C003",
+          "text": "Soy phytoestrogens reduce hot flash frequency by 20-50%",
+          "verdict": "verified"
+        },
+        {
+          "id": "C004",
+          "text": "Vitamin D deficiency prevalence increases during menopause",
+          "verdict": "verified"
+        },
+        {
+          "id": "C005",
+          "text": "Specific blood pressure reduction figure from dietary study",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C006",
+          "text": "Mayo Clinic weight management study dated to 2015",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C007",
+          "text": "BMJ saturated fat meta-analysis findings from single paper",
+          "verdict": "refuted"
+        },
+        {
+          "id": "C008",
+          "text": "Omega-3 improves mood symptoms in perimenopause",
+          "verdict": "verified"
+        },
+        {
+          "id": "C009",
+          "text": "Weight gain of ~8% during menopausal transition",
+          "verdict": "hedged"
+        },
+        {
+          "id": "C010",
+          "text": "Magnesium supplementation improves sleep quality",
+          "verdict": "verified"
+        },
+        {
+          "id": "C011",
+          "text": "Bone density loss 2-3% per year in first 5 years post-menopause",
+          "verdict": "verified"
+        },
+        {
+          "id": "C012",
+          "text": "Gut microbiome changes affect estrogen metabolism",
+          "verdict": "hedged"
+        }
+      ]
+    },
+    "patterns": [
+      "Numeric Nuisance",
+      "Temporal Date Fabrication",
+      "Snowball Confabulation",
+      "Statistical Improbability"
+    ],
+    "originalQuote": "\"This comprehensive guide reviews the current evidence on nutritional strategies for managing menopausal symptoms, including dietary patterns, supplementation, and lifestyle modifications based on peer-reviewed clinical research [...]\"",
+    "summary": "A competent AI-generated literature review on menopause nutrition that cites real peer-reviewed sources and makes recommendations largely consistent with clinical guidelines. However, it contains characteristic LLM inaccuracies: an overstated blood pressure figure, an incorrect study date (off by one year), two BMJ meta-analyses conflated into a single citation, and an imprecise weight gain statistic. These are not fabrications — they're the subtle rendering errors typical of AI-generated health content. After three verification passes and corrections, the document reached HIGH trust.",
+    "keyFinding": {
+      "sourceActuallySays": "Peer-reviewed sources support the core nutritional recommendations, with specific nuances in effect sizes and study dates",
+      "postClaims": "Guide presents the right conclusions from the right sources, but renders specific figures, dates, and citation details imprecisely — typical of LLM-generated health content"
+    },
+    "fullReport": {
+      "executiveSummary": "Verification of an AI-generated menopause nutrition guide across three iterative versions revealed a document that is broadly well-researched and mostly accurate. The guide cites real peer-reviewed sources and makes recommendations consistent with clinical guidelines. However, it overstates certain findings, misattributes one citation, contains an incorrect study date, and conflates two meta-analyses. After three verification passes and corrections, the final version reached HIGH trust.",
+      "claimTable": [
+        {
+          "id": "C001",
+          "summary": "Calcium reduces postmenopausal fracture risk",
+          "isr": "0.90",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C002",
+          "summary": "Mediterranean diet reduces symptom severity",
+          "isr": "0.85",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C003",
+          "summary": "Soy phytoestrogens reduce hot flashes 20-50%",
+          "isr": "0.80",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C004",
+          "summary": "Vitamin D deficiency increases during menopause",
+          "isr": "0.85",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C005",
+          "summary": "Blood pressure reduction figure overstated",
+          "isr": "0.45",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C006",
+          "summary": "Mayo Clinic study date off by one year",
+          "isr": "0.40",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C007",
+          "summary": "Two BMJ meta-analyses conflated into one",
+          "isr": "0.35",
+          "verdict": "REFUTED"
+        },
+        {
+          "id": "C008",
+          "summary": "Omega-3 improves perimenopause mood",
+          "isr": "0.75",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C009",
+          "summary": "~8% weight gain during transition",
+          "isr": "0.50",
+          "verdict": "HEDGED"
+        },
+        {
+          "id": "C010",
+          "summary": "Magnesium improves menopausal sleep",
+          "isr": "0.70",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C011",
+          "summary": "Bone loss 2-3%/year first 5 years",
+          "isr": "0.85",
+          "verdict": "VERIFIED"
+        },
+        {
+          "id": "C012",
+          "summary": "Gut microbiome affects estrogen metabolism",
+          "isr": "0.65",
+          "verdict": "HEDGED"
+        }
+      ],
+      "criticalAnalysis": [
+        "<strong>Overstated Blood Pressure Finding (NUM-01):</strong> The guide cited a specific BP reduction figure that overstates the original study's more modest and nuanced result. Common LLM pattern — generating a precise number within the plausible range that doesn't match the source.",
+        "<strong>Incorrect Study Date (NUM-03):</strong> A Mayo Clinic study was dated to 2015 when actually published in 2016. The study is real, the finding is real, but the date is off by one year. Temporal Date Fabrication at moderate severity.",
+        "<strong>Citation Conflation (GEN-04):</strong> Findings from two separate BMJ meta-analyses on saturated fat were attributed to a single paper. One examined cardiovascular outcomes, the other all-cause mortality. Merging conclusions creates a misleading impression.",
+        "<strong>Imprecise Weight Statistic (NUM-04):</strong> The ~8% weight gain figure doesn't match SWAN data reporting ~9.5-10% cumulative gain. Not fabricated, but imprecise enough to warrant correction.",
+        "<strong>Iterative Improvement:</strong> Through three verification passes, all errors were identified and corrected. The final version accurately reflects current peer-reviewed evidence — demonstrating that systematic verification significantly improves LLM-generated health content."
+      ],
+      "sourceCredibility": [
+        "<strong>Document Type:</strong> AI-generated literature review on menopause nutrition, compiled from peer-reviewed sources including clinical guidelines and meta-analyses.",
+        "<strong>Source Quality:</strong> The underlying sources are legitimate — peer-reviewed journals, clinical guidelines, and established medical institutions. The AI correctly identified relevant research.",
+        "<strong>LLM Pattern:</strong> This document exemplifies the typical quality profile of AI-generated health content: real sources, real findings, but imprecise rendering of specific details. The errors are not dangerous individually but compound if used uncritically for clinical decisions."
+      ],
+      "finalVerdict": "<strong>Overall B2T Trust Score: MODERATE (Hedge — lean positive).</strong> The guide is a competent synthesis of legitimate nutritional science with specific, correctable inaccuracies. After correction, it reaches HIGH trust. Recommendation: HEDGE — use with corrections applied. Core nutritional recommendations are well-supported. Specific figures, dates, and citations should be verified against primary sources before professional use."
+    },
+    "modulesUsed": "M1 → M2 → M3 → M4 → M5 → M6 → M7 → M8 → M9"
   }
 ]
