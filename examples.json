@@ -1,0 +1,74 @@
+[
+  {
+    "id": "hulscher-pcr-2026",
+    "verdict": "REJECT",
+    "severity": "critical",
+    "claimType": "Conspiracy",
+    "platform": "x",
+    "title": "\"86% of PCR-Positive COVID Cases Were Not Real Infections\"",
+    "author": "Nicolas Hulscher, MPH",
+    "datePublished": "4 Mar 2026",
+    "dateChecked": "6 Mar 2026",
+    "views": "95,730 views",
+    "sourceUrl": "https://x.com/NicHulscher/status/2029328519394734582",
+    "image": "image-2.jpg",
+    "imageAlt": "Screenshot of Nicolas Hulscher tweet",
+    "reportFile": "m8_verdict_hulscher.md",
+    "b2tScore": "LOW",
+    "claims": {
+      "total": 8,
+      "refuted": 5,
+      "verified": 2,
+      "unverifiable": 1,
+      "items": [
+        { "id": "C001", "text": "86% of PCR cases were not real infections", "verdict": "refuted" },
+        { "id": "C002", "text": "Only 14% of PCR-positive individuals were truly infected", "verdict": "refuted" },
+        { "id": "C003", "text": "Public health measures built on fraudulent testing", "verdict": "refuted" },
+        { "id": "C004", "text": "PCR tests used for COVID were \"fake tests\"", "verdict": "refuted" },
+        { "id": "C005", "text": "COVID vaccines are \"gene therapy\"", "verdict": "refuted" },
+        { "id": "C006", "text": "The referenced Günther 2025 study exists", "verdict": "verified" },
+        { "id": "C007", "text": "People using PCR tests should be prosecuted", "verdict": "unverifiable" },
+        { "id": "C008", "text": "Hulscher is affiliated with McCullough Foundation", "verdict": "verified" }
+      ]
+    },
+    "patterns": [
+      "Snowball Confabulation",
+      "Science-Washing",
+      "Imitative Falsehood",
+      "High-Confidence Delusion"
+    ],
+    "originalQuote": "\"BREAKING: 86% of PCR-Positive 'COVID Cases' Were Not Real Infections [...] FRAUDULENT testing illusion. Time to prosecute those who used fake tests to manufacture panic, destroy livelihoods, and force gene therapy.\"",
+    "summary": "This post is a textbook case of science-washing. A legitimate German epidemiological study (Günther, 2025) is stripped of its scientific context and weaponized into a baseless fraud allegation. The study models seroconversion rates — the probability that PCR-positive individuals later develop IgG antibodies — and finds a calibration parameter of ~14%. It says nothing about PCR tests being \"fake.\" Decades of immunological research confirm that many true infections are cleared by innate immunity without triggering systemic antibody production. The leap from a statistical parameter to demands for criminal prosecution is built entirely on immunological illiteracy, not evidence.",
+    "keyFinding": {
+      "sourceActuallySays": "~14% of PCR-positive individuals later developed IgG antibodies (a seroconversion calibration parameter in a mathematical model)",
+      "postClaims": "86% of positive COVID tests were fake, proving a \"FRAUDULENT testing illusion\" that should trigger criminal prosecution"
+    },
+    "fullReport": {
+      "executiveSummary": "The core claim that \"86% of PCR-positive COVID cases were not real infections\" is a critical misrepresentation of a genuine epidemiological modeling study (Günther, 2025). The study calibrated a mathematical model using aggregate German laboratory data, finding that only about 14% of PCR-positive tests were followed by IgG seroconversion. However, the tweet conflates this lack of seroconversion with the tests being \"fake\" or the infections not being \"real.\"",
+      "claimTable": [
+        { "id": "C001", "summary": "86% of PCR cases were not real infections", "isr": "0.99", "verdict": "REFUTED" },
+        { "id": "C002", "summary": "Only 14% of PCR-positive individuals became infected", "isr": "0.99", "verdict": "REFUTED" },
+        { "id": "C003", "summary": "Measures built on fraudulent testing illusion", "isr": "1.00", "verdict": "REFUTED" },
+        { "id": "C004", "summary": "PCR tests used for COVID were \"fake tests\"", "isr": "1.00", "verdict": "REFUTED" },
+        { "id": "C005", "summary": "COVID-19 vaccines are \"gene therapy\"", "isr": "1.00", "verdict": "REFUTED" },
+        { "id": "C006", "summary": "The referenced Günther 2025 study exists", "isr": "0.85", "verdict": "VERIFIED" },
+        { "id": "C007", "summary": "People using PCR tests should be prosecuted", "isr": "1.00", "verdict": "UNVERIFIABLE" },
+        { "id": "C008", "summary": "Hulscher is at McCullough Foundation", "isr": "0.85", "verdict": "VERIFIED" }
+      ],
+      "criticalAnalysis": [
+        "<strong>Equating Seroconversion with \"Real Infection\":</strong> The tweet assumes that if a person tests positive on PCR but does not later develop IgG antibodies, the initial PCR was a \"false positive.\" This ignores established immunology.",
+        "<strong>Delegitimizing Validated Diagnostics:</strong> PCR tests detect viral RNA at the mucosal barrier — not predict future antibody responses.",
+        "<strong>Snowball Confabulation:</strong> The tweet takes the study's calibration parameter (PPCR = 0.14) and frames it as evidence of a \"FRAUDULENT testing illusion.\"",
+        "<strong>Unrelated Misinformation:</strong> The tweet shoehorns \"force gene therapy\" despite the study having nothing to do with vaccines.",
+        "<strong>Calls for Retribution:</strong> The compounded misrepresentations justify demands for criminal prosecution."
+      ],
+      "sourceCredibility": [
+        "<strong>Author:</strong> Nicolas Hulscher received his MPH from the University of Michigan in 2024. Background prior to 2023: dental assistant and lab technician.",
+        "<strong>Organization:</strong> The McCullough Foundation is run by Dr. Peter McCullough, whose board certification was revoked by ABIM in January 2025.",
+        "<strong>Primary Source:</strong> The Günther (2025) study is a legitimate, peer-reviewed paper published in Frontiers in Epidemiology. Its findings have been completely divorced from their scientific context."
+      ],
+      "finalVerdict": "<strong>Overall B2T Trust Score: LOW (Reject).</strong> The post represents a sophisticated form of science-washing, where a legitimate citation is used as a Trojan horse to deliver scientifically illiterate conclusions, false allegations of fraud, and unrelated vaccine misinformation."
+    },
+    "modulesUsed": "M1 → M2 → M3 → M4 → M5 → M7 → M8 → M9"
+  }
+]

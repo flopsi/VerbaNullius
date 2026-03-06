@@ -1,0 +1,3020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+   ______                            __
+  / ____/___  ____ ___  ____  __  __/ /____  _____
+ / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
+/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
+\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
+                    /_/
+        Created with Perplexity Computer
+        https://www.perplexity.ai/computer
+-->
+
+<!-- Perplexity Computer Attribution — SEO Meta Tags -->
+<meta name="generator" content="Perplexity Computer">
+<meta name="author" content="Perplexity Computer">
+<meta property="og:see_also" content="https://www.perplexity.ai/computer">
+<link rel="author" href="https://www.perplexity.ai/computer">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VerbaNullius — Origin-Aware Verification for the AI Age</title>
+<meta name="description" content="A 10-module verification pipeline that systematically detects and classifies LLM hallucinations across 30 patterns and 7 domains.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Type Scale */
+  --text-xs:   clamp(0.75rem,  0.7rem  + 0.25vw, 0.875rem);
+  --text-sm:   clamp(0.875rem, 0.8rem  + 0.35vw, 1rem);
+  --text-base: clamp(1rem,     0.9rem  + 0.5vw,  1.125rem);
+  --text-lg:   clamp(1.125rem, 0.95rem + 0.85vw, 1.5rem);
+  --text-xl:   clamp(1.5rem,   1rem    + 1.5vw,  2.25rem);
+  --text-2xl:  clamp(2rem,     1.2rem  + 2.5vw,  3.5rem);
+  --text-3xl:  clamp(2.5rem,   1rem    + 4vw,    5rem);
+
+  /* Spacing (4px grid) */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Fonts */
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Menlo', monospace;
+
+  /* Content widths */
+  --content-narrow: 640px;
+  --content-default: 960px;
+  --content-wide: 1200px;
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 180ms var(--ease-out);
+
+  /* Domain colors */
+  --domain-TAIL: #a13544;
+  --domain-NUM: #da7101;
+  --domain-MA: #964219;
+  --domain-GEN: #006494;
+  --domain-VIZ: #7a39bb;
+  --domain-PERF: #a12c7b;
+  --domain-DET: #7a7974;
+}
+
+/* ═══ LIGHT MODE ═══ */
+:root, [data-theme="light"] {
+  --color-bg:             #f5f4f0;
+  --color-surface:        #faf9f6;
+  --color-surface-2:      #ffffff;
+  --color-surface-offset: #eeedea;
+  --color-surface-dynamic: #e4e3df;
+  --color-divider:        #d9d8d4;
+  --color-border:         #cccbc7;
+  --color-text:           #1a1a18;
+  --color-text-muted:     #6b6a66;
+  --color-text-faint:     #a3a29e;
+  --color-text-inverse:   #f5f4f0;
+  --color-primary:        #01696f;
+  --color-primary-hover:  #0c4e54;
+  --color-primary-text:   #ffffff;
+  --pipeline-circle-bg: transparent;
+  --pipeline-circle-color: #01696f;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.07);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.10);
+
+  --severity-alarming: #c62828;
+  --severity-alarming-bg: rgba(198,40,40,0.08);
+  --severity-high: #e65100;
+  --severity-high-bg: rgba(230,81,0,0.08);
+  --severity-moderate: #f57f17;
+  --severity-moderate-bg: rgba(245,127,23,0.08);
+  --severity-mild: #558b2f;
+  --severity-mild-bg: rgba(85,139,47,0.08);
+  --severity-meta: #546e7a;
+  --severity-meta-bg: rgba(84,110,122,0.08);
+}
+
+/* ═══ DARK MODE ═══ */
+[data-theme="dark"] {
+  --color-bg:             #111110;
+  --color-surface:        #1a1918;
+  --color-surface-2:      #222120;
+  --color-surface-offset: #161615;
+  --color-surface-dynamic: #2a2928;
+  --color-divider:        #2e2d2c;
+  --color-border:         #3a3938;
+  --color-text:           #d4d3d0;
+  --color-text-muted:     #8a8986;
+  --color-text-faint:     #5a5957;
+  --color-text-inverse:   #1a1918;
+  --color-primary:        #4f98a3;
+  --color-primary-hover:  #3a7d88;
+  --color-primary-text:   #111110;
+  --pipeline-circle-bg: transparent;
+  --pipeline-circle-color: #ffffff;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+
+  --severity-alarming: #ef5350;
+  --severity-alarming-bg: rgba(239,83,80,0.12);
+  --severity-high: #ff9800;
+  --severity-high-bg: rgba(255,152,0,0.12);
+  --severity-moderate: #fdd835;
+  --severity-moderate-bg: rgba(253,216,53,0.10);
+  --severity-mild: #8bc34a;
+  --severity-mild-bg: rgba(139,195,74,0.12);
+  --severity-meta: #78909c;
+  --severity-meta-bg: rgba(120,144,156,0.12);
+
+  --domain-TAIL: #dd6974;
+  --domain-NUM: #fdab43;
+  --domain-MA: #bb653b;
+  --domain-GEN: #5591c7;
+  --domain-VIZ: #a86fdf;
+  --domain-PERF: #d163a7;
+  --domain-DET: #8a8986;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --color-bg:             #111110;
+    --color-surface:        #1a1918;
+    --color-surface-2:      #222120;
+    --color-surface-offset: #161615;
+    --color-surface-dynamic: #2a2928;
+    --color-divider:        #2e2d2c;
+    --color-border:         #3a3938;
+    --color-text:           #d4d3d0;
+    --color-text-muted:     #8a8986;
+    --color-text-faint:     #5a5957;
+    --color-text-inverse:   #1a1918;
+    --color-primary:        #4f98a3;
+    --color-primary-hover:  #3a7d88;
+    --color-primary-text:   #111110;
+    --pipeline-circle-bg: transparent;
+    --pipeline-circle-color: #ffffff;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+    --severity-alarming: #ef5350;
+    --severity-alarming-bg: rgba(239,83,80,0.12);
+    --severity-high: #ff9800;
+    --severity-high-bg: rgba(255,152,0,0.12);
+    --severity-moderate: #fdd835;
+    --severity-moderate-bg: rgba(253,216,53,0.10);
+    --severity-mild: #8bc34a;
+    --severity-mild-bg: rgba(139,195,74,0.12);
+    --severity-meta: #78909c;
+    --severity-meta-bg: rgba(120,144,156,0.12);
+    --domain-TAIL: #dd6974;
+    --domain-NUM: #fdab43;
+    --domain-MA: #bb653b;
+    --domain-GEN: #5591c7;
+    --domain-VIZ: #a86fdf;
+    --domain-PERF: #d163a7;
+    --domain-DET: #8a8986;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   BASE STYLES
+   ═══════════════════════════════════════════════════ */
+html {
+  -moz-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--space-16);
+}
+
+body {
+  min-height: 100dvh;
+  line-height: 1.6;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 { text-wrap: balance; line-height: 1.2; }
+p, li, figcaption { text-wrap: pretty; max-width: 72ch; }
+ul[role="list"], ol[role="list"] { list-style: none; }
+input, button, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; }
+
+::selection {
+  background: rgba(79,152,163,0.25);
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════ */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--color-bg);
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--transition-fast), backdrop-filter var(--transition-fast);
+}
+.nav.scrolled {
+  border-bottom-color: var(--color-divider);
+  background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.nav-inner {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: var(--space-3) var(--space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--color-text);
+  flex-shrink: 0;
+}
+.nav-brand svg { width: 24px; height: 24px; flex-shrink: 0; }
+.nav-brand-text {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  letter-spacing: -0.01em;
+}
+@media (max-width: 480px) {
+  .nav-brand-text { display: none; }
+}
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0 auto;
+}
+.nav-tab {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-md);
+  transition: color var(--transition-fast), background var(--transition-fast);
+  position: relative;
+  white-space: nowrap;
+}
+.nav-tab:hover { color: var(--color-text); background: var(--color-surface-dynamic); }
+.nav-tab.active {
+  color: var(--color-primary);
+}
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -13px;
+  left: var(--space-3);
+  right: var(--space-3);
+  height: 2px;
+  background: var(--color-primary);
+  border-radius: 1px;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+.nav-search {
+  position: relative;
+}
+.nav-search input {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-8);
+  font-size: var(--text-xs);
+  width: 180px;
+  color: var(--color-text);
+  transition: border-color var(--transition-fast), width var(--transition-fast);
+}
+.nav-search input::placeholder { color: var(--color-text-faint); }
+.nav-search input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  width: 220px;
+}
+.nav-search-icon {
+  position: absolute;
+  left: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  color: var(--color-text-faint);
+  pointer-events: none;
+}
+@media (max-width: 640px) {
+  .nav-search input { width: 120px; }
+  .nav-search input:focus { width: 160px; }
+}
+.theme-toggle {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+.theme-toggle:hover { color: var(--color-text); background: var(--color-surface-dynamic); }
+.theme-toggle svg { width: 16px; height: 16px; }
+
+/* ═══════════════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════════════ */
+main {
+  flex: 1;
+}
+.view {
+  display: none;
+}
+.view.active {
+  display: block;
+}
+.section-container {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+/* ═══════════════════════════════════════════════════
+   VIEW 1: LANDING PAGE
+   ═══════════════════════════════════════════════════ */
+.hero {
+  padding: clamp(var(--space-10), 6vw, var(--space-20)) var(--space-6) clamp(var(--space-8), 4vw, var(--space-12));
+  max-width: var(--content-wide);
+  margin: 0 auto;
+}
+.hero-icon {
+  width: 48px;
+  height: 48px;
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
+}
+.hero h1 {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--color-text);
+  margin-bottom: var(--space-3);
+}
+.hero-tagline {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  font-weight: 300;
+  margin-bottom: var(--space-4);
+}
+.hero-problem {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  max-width: 64ch;
+  margin-bottom: var(--space-6);
+  line-height: 1.7;
+}
+.stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-divider);
+  border-bottom: 1px solid var(--color-divider);
+}
+.stat {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+.stat strong {
+  color: var(--color-text);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+.btn-primary:hover { background: var(--color-primary-hover); }
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  background: transparent;
+  color: var(--color-text);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+.btn-secondary:hover { background: var(--color-surface-dynamic); border-color: var(--color-text-faint); }
+
+/* Landing sections */
+.landing-section {
+  padding: clamp(var(--space-8), 4vw, var(--space-12)) var(--space-6);
+  max-width: var(--content-wide);
+  margin: 0 auto;
+}
+.landing-section + .landing-section {
+  border-top: 1px solid var(--color-divider);
+}
+.section-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-mono);
+}
+.section-heading {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-4);
+  letter-spacing: -0.01em;
+}
+.section-body {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-width: 64ch;
+}
+
+/* Principles */
+.principles-list {
+  display: grid;
+  gap: var(--space-4);
+  list-style: none;
+}
+.principle-item {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+}
+.principle-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  border-radius: var(--radius-sm);
+}
+.principle-text {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.6;
+}
+.principle-text strong {
+  color: var(--color-text);
+  font-weight: 600;
+}
+.principle-text span {
+  color: var(--color-text-muted);
+}
+
+/* Audiences */
+.audience-list {
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+}
+.audience-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+.audience-item::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 8px;
+}
+
+/* Research sources */
+.research-list {
+  list-style: none;
+  display: grid;
+  gap: var(--space-1);
+}
+.research-item {
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-divider);
+  line-height: 1.5;
+}
+.research-item:last-child { border-bottom: none; }
+
+/* ═══════════════════════════════════════════════════
+   VIEW 2: WORKFLOW
+   ═══════════════════════════════════════════════════ */
+.workflow-header {
+  padding: clamp(var(--space-8), 4vw, var(--space-12)) var(--space-6) var(--space-4);
+  max-width: var(--content-wide);
+  margin: 0 auto;
+}
+.workflow-header h2 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-3);
+}
+.workflow-header p {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  max-width: 64ch;
+}
+
+/* Pipeline diagram */
+.pipeline-wrap {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: 0 var(--space-6) var(--space-8);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.pipeline-wrap::-webkit-scrollbar { height: 4px; }
+.pipeline-wrap::-webkit-scrollbar-track { background: transparent; }
+.pipeline-wrap::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 2px; }
+.pipeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  min-width: max-content;
+  padding: var(--space-4) var(--space-2);
+}
+.pipeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-lg);
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+  position: relative;
+  min-width: 90px;
+}
+.pipeline-node:hover { background: var(--color-surface-dynamic); }
+.pipeline-node-id {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+  order: 0;
+}
+.pipeline-node-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border: 2px solid var(--color-primary);
+  background: var(--pipeline-circle-bg);
+  color: var(--pipeline-circle-color);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  order: 1;
+}
+.pipeline-node-circle svg {
+  width: 24px;
+  height: 24px;
+}
+.pipeline-node:hover .pipeline-node-circle {
+  transform: scale(1.08);
+  box-shadow: var(--shadow-md);
+}
+.pipeline-node.optional .pipeline-node-circle {
+  border-style: dashed;
+}
+.pipeline-node-name {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 88px;
+  line-height: 1.3;
+  margin-top: var(--space-2);
+  order: 2;
+}
+.pipeline-node-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  order: 3;
+  margin-top: 2px;
+}
+.pipeline-connector {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 2px;
+  /* vertically align arrow with circle center: ID label height (~18px) + gap (8px) + half circle (26px) = ~52px from top */
+  margin-top: 44px;
+}
+.pipeline-connector svg {
+  color: var(--color-border);
+  width: 20px;
+  height: 20px;
+}
+.pipeline-data-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--color-text-faint);
+  text-align: center;
+  max-width: 88px;
+  margin-top: var(--space-1);
+  line-height: 1.3;
+  word-break: break-all;
+  order: 4;
+}
+
+/* Module detail cards */
+.module-cards {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: 0 var(--space-6) clamp(var(--space-8), 4vw, var(--space-12));
+  display: grid;
+  gap: var(--space-3);
+}
+.module-card {
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+.module-card:hover { border-color: var(--color-border); }
+.module-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  cursor: pointer;
+  user-select: none;
+}
+.module-card-accent {
+  display: none;
+}
+.module-card-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+  border-radius: var(--radius-md);
+}
+.module-card-icon svg {
+  width: 20px;
+  height: 20px;
+}
+.module-card-info {
+  flex: 1;
+  min-width: 0;
+}
+.module-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+.module-card-id {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.module-card-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.module-card-badge.required {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  color: var(--color-primary);
+}
+.module-card-badge.optional {
+  background: var(--color-surface-dynamic);
+  color: var(--color-text-faint);
+}
+.module-card-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+.module-card-short {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-top: var(--space-1);
+}
+.module-card-expand-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-faint);
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+.module-card.expanded .module-card-expand-icon {
+  transform: rotate(180deg);
+}
+.module-card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 300ms var(--ease-out);
+}
+.module-card.expanded .module-card-body {
+  max-height: 600px;
+}
+.module-card-body-inner {
+  padding: 0 var(--space-5) var(--space-5);
+  border-top: 1px solid var(--color-divider);
+  padding-top: var(--space-4);
+  display: grid;
+  gap: var(--space-4);
+}
+.module-detail-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-1);
+}
+.module-detail-text {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.module-detail-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.module-detail-list li {
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+  padding-left: var(--space-4);
+  position: relative;
+  line-height: 1.5;
+}
+.module-detail-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--color-text-faint);
+}
+.module-concepts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.concept-chip {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-surface-dynamic);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+}
+
+/* ═══════════════════════════════════════════════════
+   VIEW 3: PATTERN CATALOG
+   ═══════════════════════════════════════════════════ */
+.catalog-header {
+  padding: clamp(var(--space-8), 4vw, var(--space-10)) var(--space-6) var(--space-4);
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+.catalog-header-left h2 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-2);
+}
+.catalog-header-left p {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.catalog-view-toggle {
+  display: flex;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.catalog-view-btn {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: all var(--transition-fast);
+}
+.catalog-view-btn.active {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+.catalog-view-btn:not(.active):hover {
+  background: var(--color-surface-dynamic);
+  color: var(--color-text);
+}
+
+/* Filters */
+.catalog-filters {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  align-items: center;
+}
+.filter-group-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-right: var(--space-1);
+}
+.filter-chip {
+  padding: var(--space-1) var(--space-2);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-divider);
+  color: var(--color-text-muted);
+  background: transparent;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+.filter-chip:hover {
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+.filter-chip.active {
+  background: var(--color-surface-dynamic);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+.filter-separator {
+  width: 1px;
+  height: 20px;
+  background: var(--color-divider);
+  margin: 0 var(--space-2);
+}
+
+/* Pattern cards */
+.pattern-cards-view,
+.taxonomy-map-view {
+  display: none;
+}
+.pattern-cards-view.active,
+.taxonomy-map-view.active {
+  display: block;
+}
+.pattern-grid {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6) clamp(var(--space-8), 4vw, var(--space-12));
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-3);
+}
+@media (max-width: 700px) {
+  .pattern-grid { grid-template-columns: 1fr; }
+}
+.pattern-card {
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+  transition: border-color var(--transition-fast);
+}
+.pattern-card:hover { border-color: var(--color-border); }
+.pattern-card-header {
+  padding: var(--space-4);
+  cursor: pointer;
+  user-select: none;
+}
+.pattern-card-top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+.pattern-id {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--domaincolor, var(--color-text-faint)) 12%, transparent);
+}
+.severity-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.severity-badge.alarming { background: var(--severity-alarming-bg); color: var(--severity-alarming); }
+.severity-badge.high { background: var(--severity-high-bg); color: var(--severity-high); }
+.severity-badge.moderate { background: var(--severity-moderate-bg); color: var(--severity-moderate); }
+.severity-badge.mild { background: var(--severity-mild-bg); color: var(--severity-mild); }
+.severity-badge.meta { background: var(--severity-meta-bg); color: var(--severity-meta); }
+.pattern-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+.pattern-desc {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pattern-card.expanded .pattern-desc {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+.pattern-card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 300ms var(--ease-out);
+}
+.pattern-card.expanded .pattern-card-body {
+  max-height: 500px;
+}
+.pattern-card-body-inner {
+  padding: 0 var(--space-4) var(--space-4);
+  border-top: 1px solid var(--color-divider);
+  padding-top: var(--space-3);
+  display: grid;
+  gap: var(--space-3);
+}
+.pattern-detail-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-1);
+}
+.pattern-detail-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pattern-detail-list li {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  padding-left: var(--space-3);
+  position: relative;
+  line-height: 1.5;
+}
+.pattern-detail-list li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: var(--color-text-faint);
+  font-weight: 700;
+}
+.pattern-sources {
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--color-text-faint);
+  line-height: 1.5;
+}
+.pattern-domain-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-dynamic);
+  color: var(--color-text-muted);
+}
+
+/* No results */
+.no-results {
+  padding: var(--space-16) var(--space-6);
+  text-align: center;
+  color: var(--color-text-faint);
+  font-size: var(--text-sm);
+  grid-column: 1 / -1;
+}
+
+/* Taxonomy map */
+.taxonomy-container {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6) clamp(var(--space-8), 4vw, var(--space-12));
+  overflow-x: auto;
+}
+.taxonomy-table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+.taxonomy-table th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: var(--space-2) var(--space-2);
+  text-align: center;
+  color: var(--color-text-muted);
+  background: var(--color-surface);
+  border-radius: var(--radius-sm);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.taxonomy-cell {
+  padding: var(--space-2);
+  text-align: center;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  position: relative;
+}
+.taxonomy-cell:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+  z-index: 2;
+}
+.taxonomy-cell-id {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.taxonomy-cell-name {
+  font-size: 9px;
+  line-height: 1.2;
+  margin-top: 2px;
+  opacity: 0.8;
+}
+.taxonomy-cell.empty {
+  background: transparent;
+  cursor: default;
+}
+.taxonomy-cell.empty:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Tooltip */
+.taxonomy-tooltip {
+  display: none;
+  position: fixed;
+  z-index: 200;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  max-width: 280px;
+  box-shadow: var(--shadow-lg);
+  pointer-events: none;
+}
+.taxonomy-tooltip.visible { display: block; }
+.taxonomy-tooltip-id {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+.taxonomy-tooltip-name {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+}
+.taxonomy-tooltip-severity {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  margin-bottom: var(--space-2);
+}
+.taxonomy-tooltip-desc {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* Severity legend */
+.severity-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--color-divider);
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+.legend-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════
+   PLACEHOLDER VIEWS
+   ═══════════════════════════════════════════════════ */
+.placeholder-view {
+  max-width: var(--content-default);
+  margin: 0 auto;
+  padding: clamp(var(--space-16), 10vw, var(--space-32)) var(--space-6);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+.placeholder-icon {
+  width: 64px;
+  height: 64px;
+  color: var(--color-text-faint);
+  opacity: 0.5;
+}
+.placeholder-view h2 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.placeholder-view p {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  max-width: 48ch;
+  line-height: 1.7;
+}
+.placeholder-badge {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  padding: var(--space-2) var(--space-4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-faint);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════
+   EXAMPLE CARDS
+   ═══════════════════════════════════════════════════ */
+.examples-header {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: clamp(var(--space-8), 4vw, var(--space-12)) var(--space-6) var(--space-4);
+}
+.examples-header h2 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-2);
+}
+.examples-header p {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  max-width: 64ch;
+}
+.examples-grid {
+  max-width: var(--content-wide);
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-6) clamp(var(--space-8), 4vw, var(--space-12));
+  display: grid;
+  gap: var(--space-6);
+}
+
+/* ═══ FLIP CARD CONTAINER ═══ */
+.example-flip-container {
+  perspective: 1400px;
+  cursor: pointer;
+}
+.example-flip-inner {
+  position: relative;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.example-flip-container.flipped .example-flip-inner {
+  transform: rotateY(180deg);
+}
+.example-front,
+.example-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.example-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transform: rotateY(180deg);
+}
+.flip-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-faint);
+  text-align: center;
+  margin-top: var(--space-3);
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+.example-flip-container:hover .flip-hint {
+  opacity: 1;
+}
+
+/* ═══ FRONT CARD ═══ */
+.example-front {
+  border: 1px solid var(--color-divider);
+  background: var(--color-surface);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  min-height: 380px;
+}
+@media (max-width: 640px) {
+  .example-front { grid-template-columns: 1fr; }
+}
+.front-image-area {
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
+  min-height: 300px;
+}
+.front-image-area img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+  opacity: 0.85;
+}
+.verdict-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  font-family: var(--font-mono);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: #b71c1c;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 0.15em 0.5em;
+  border: 5px solid #b71c1c;
+  border-radius: 6px;
+  opacity: 1;
+  background: none;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.front-info {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  justify-content: center;
+}
+.front-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+}
+.front-type-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--severity-alarming);
+  background: var(--severity-alarming-bg);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+.front-platform-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-faint);
+  background: var(--color-surface-offset);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.front-platform-badge svg {
+  width: 10px;
+  height: 10px;
+}
+.front-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.4;
+}
+.front-meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.front-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+.front-meta-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-width: 60px;
+}
+.front-meta-value {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+.front-divider {
+  height: 1px;
+  background: var(--color-divider);
+  margin: var(--space-1) 0;
+}
+.front-claims-bar {
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  gap: 2px;
+}
+.claims-bar-segment {
+  border-radius: 3px;
+}
+.claims-bar-segment.refuted { background: var(--severity-alarming); }
+.claims-bar-segment.verified { background: var(--severity-mild); }
+.claims-bar-segment.unverifiable { background: var(--severity-meta); }
+.front-claims-legend {
+  display: flex;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-faint);
+}
+.claims-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.claims-legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.claims-legend-dot.refuted { background: var(--severity-alarming); }
+.claims-legend-dot.verified { background: var(--severity-mild); }
+.claims-legend-dot.unverifiable { background: var(--severity-meta); }
+.front-patterns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.front-score {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+.front-score-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--severity-alarming);
+}
+.front-score-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.example-card {
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+  padding: var(--space-5);
+  display: grid;
+  gap: var(--space-4);
+}
+.example-card[data-severity="critical"] {
+  border-left: 3px solid var(--severity-alarming);
+}
+.example-card[data-severity="high"] {
+  border-left: 3px solid var(--severity-high);
+}
+.example-card[data-severity="moderate"] {
+  border-left: 3px solid var(--severity-moderate);
+}
+.example-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.example-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  flex-wrap: wrap;
+}
+.example-platform-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.example-author {
+  font-weight: 600;
+  color: var(--color-text);
+}
+.example-date, .example-views {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-faint);
+}
+.example-verdict {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.verdict-reject {
+  background: var(--severity-alarming-bg);
+  color: var(--severity-alarming);
+}
+.verdict-flag {
+  background: var(--severity-high-bg);
+  color: var(--severity-high);
+}
+.verdict-hedge {
+  background: var(--severity-moderate-bg);
+  color: var(--severity-moderate);
+}
+.verdict-endorse {
+  background: var(--severity-mild-bg);
+  color: var(--severity-mild);
+}
+.example-original {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  border-left: 2px solid var(--color-border);
+  padding-left: var(--space-4);
+  margin: 0;
+  line-height: 1.6;
+  font-style: italic;
+  max-width: 72ch;
+}
+.example-summary {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.7;
+  max-width: 72ch;
+}
+.example-summary p {
+  margin: 0;
+}
+.example-claims {
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.example-claims-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface-offset);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+.claims-summary {
+  display: flex;
+  gap: var(--space-3);
+  font-weight: 500;
+}
+.claims-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.claims-count.refuted { color: var(--severity-alarming); }
+.claims-count.verified { color: var(--severity-mild); }
+.claims-count.unverifiable { color: var(--severity-meta); }
+.example-claim {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-divider);
+  line-height: 1.5;
+}
+.claim-verdict-icon {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+}
+.claim-verdict-icon.refuted { color: var(--severity-alarming); }
+.claim-verdict-icon.verified { color: var(--severity-mild); }
+.claim-verdict-icon.unverifiable { color: var(--severity-meta); }
+.claim-verdict-icon.hedged { color: var(--severity-moderate); }
+.claim-id {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--color-text-faint);
+  flex-shrink: 0;
+  min-width: 36px;
+}
+.claim-text {
+  flex: 1;
+}
+.example-key-finding {
+  background: var(--color-surface-offset);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+.example-key-finding-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-3);
+}
+.example-key-finding-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+@media (max-width: 640px) {
+  .example-key-finding-grid { grid-template-columns: 1fr; }
+}
+.finding-col-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-2);
+}
+.finding-col:first-child .finding-col-label { color: var(--severity-mild); }
+.finding-col:last-child .finding-col-label { color: var(--severity-alarming); }
+.finding-col p {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+.example-patterns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.pattern-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  padding: var(--space-1) var(--space-2);
+  background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+  color: var(--color-primary);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.02em;
+}
+.example-full-report {
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.example-full-report summary {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  user-select: none;
+  background: var(--color-surface-offset);
+  list-style: none;
+}
+.example-full-report summary::-webkit-details-marker { display: none; }
+.example-full-report summary::before {
+  content: '▶ ';
+  font-size: 10px;
+  transition: transform var(--transition-fast);
+  display: inline-block;
+}
+.example-full-report[open] summary::before {
+  transform: rotate(90deg);
+}
+.example-report-content {
+  padding: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-height: 500px;
+  overflow-y: auto;
+}
+.example-report-content h3 {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text);
+  margin: var(--space-3) 0 var(--space-2);
+}
+.example-report-content h3:first-child { margin-top: 0; }
+.example-report-content p {
+  margin-bottom: var(--space-2);
+  max-width: none;
+}
+.example-report-content ol, .example-report-content ul {
+  padding-left: var(--space-5);
+  margin-bottom: var(--space-2);
+}
+.example-report-content li {
+  margin-bottom: var(--space-1);
+  max-width: none;
+}
+.example-report-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-3) 0;
+  font-size: 11px;
+}
+.example-report-content th,
+.example-report-content td {
+  padding: var(--space-2);
+  border: 1px solid var(--color-divider);
+  text-align: left;
+}
+.example-report-content th {
+  background: var(--color-surface-offset);
+  font-weight: 600;
+}
+.example-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-divider);
+}
+.modules-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-faint);
+  letter-spacing: 0.02em;
+}
+.example-source-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+.example-source-link:hover { color: var(--color-primary-hover); }
+.back-patterns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.back-patterns .pattern-tag {
+  font-size: 10px;
+  padding: var(--space-1) var(--space-2);
+}
+.example-report-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.report-download-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 5%, transparent);
+  transition: all var(--transition-fast);
+  align-self: flex-start;
+}
+.report-download-link:hover {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border-color: var(--color-primary);
+  color: var(--color-primary-hover);
+}
+
+/* ═══════════════════════════════════════════════════
+   CONSEQUENCES SECTION
+   ═══════════════════════════════════════════════════ */
+.consequences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.consequence-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  transition: border-color var(--transition-fast);
+}
+.consequence-card:hover {
+  border-color: var(--color-border);
+}
+.consequence-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+.consequence-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  color: var(--severity-alarming);
+  opacity: 0.8;
+}
+.consequence-card-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.3;
+}
+.consequence-amount {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--severity-alarming);
+  margin-top: var(--space-1);
+}
+.consequence-desc {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+.consequence-year {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-faint);
+  margin-top: var(--space-2);
+}
+.consequences-stat {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--severity-alarming-bg);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+.consequences-stat-number {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--severity-alarming);
+}
+.consequences-stat-label {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+/* ═══════════════════════════════════════════════════
+   SEARCH RESULTS HIGHLIGHT
+   ═══════════════════════════════════════════════════ */
+.search-active .pattern-card {
+  opacity: 0.3;
+  transition: opacity var(--transition-fast);
+}
+.search-active .pattern-card.search-match {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--color-divider);
+  padding: var(--space-6);
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+}
+footer a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+footer a:hover { color: var(--color-primary); }
+.footer-disclaimer {
+  font-size: 10px;
+  color: var(--color-text-faint);
+  max-width: 64ch;
+  line-height: 1.5;
+  margin-top: var(--space-1);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .nav-inner { padding: var(--space-2) var(--space-4); gap: var(--space-2); }
+  .nav-tab { padding: var(--space-2); font-size: 12px; }
+  .hero { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .landing-section { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .stats-bar { gap: var(--space-4); }
+  .catalog-filters { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .pattern-grid { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .module-cards { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .pipeline-wrap { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .workflow-header { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .catalog-header { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .taxonomy-container { padding-left: var(--space-4); padding-right: var(--space-4); }
+}
+</style>
+</head>
+<body>
+<!-- Skip link -->
+<a href="#main-content" class="sr-only" style="position:absolute;top:0;left:0;padding:8px;background:var(--color-primary);color:var(--color-primary-text);z-index:999;">Skip to content</a>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav class="nav" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand" aria-label="VerbaNullius home" data-nav="overview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2C12 2 8 6 8 10c0 2 1 3 2 3.5"/>
+        <path d="M12 2C12 2 16 6 16 10c0 2-1 3-2 3.5"/>
+        <path d="M10 13.5C10 13.5 9 15 9 17c0 1.5 1 3 3 3s3-1.5 3-3c0-2-1-3.5-1-3.5"/>
+        <line x1="12" y1="2" x2="12" y2="4"/>
+        <path d="M7 8c-2 0-3.5 1-3.5 2.5S5 13 7 13"/>
+        <path d="M17 8c2 0 3.5 1 3.5 2.5S19 13 17 13"/>
+      </svg>
+      <span class="nav-brand-text">VerbaNullius</span>
+    </a>
+    <div class="nav-tabs" role="tablist">
+      <button class="nav-tab active" role="tab" data-view="overview" aria-selected="true">Overview</button>
+      <button class="nav-tab" role="tab" data-view="workflow" aria-selected="false">Workflow</button>
+      <button class="nav-tab" role="tab" data-view="patterns" aria-selected="false">Patterns</button>
+      <button class="nav-tab" role="tab" data-view="examples" aria-selected="false">Examples</button>
+      <button class="nav-tab" role="tab" data-view="about" aria-selected="false">About</button>
+    </div>
+    <div class="nav-right">
+      <div class="nav-search">
+        <svg class="nav-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input type="search" placeholder="Search patterns..." aria-label="Search patterns by name, ID, or description" id="searchInput">
+      </div>
+      <button class="theme-toggle" data-theme-toggle aria-label="Switch to light mode">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main id="main-content">
+
+  <!-- ═══ VIEW 1: OVERVIEW ═══ -->
+  <div class="view active" id="view-overview" role="tabpanel">
+    <section class="hero">
+      <svg class="hero-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M24 4C24 4 16 12 16 20c0 4 2 6 4 7"/>
+        <path d="M24 4C24 4 32 12 32 20c0 4-2 6-4 7"/>
+        <path d="M20 27c0 0-2 3-2 7c0 3 2 6 6 6s6-3 6-6c0-4-2-7-2-7"/>
+        <line x1="24" y1="4" x2="24" y2="8"/>
+        <path d="M14 16c-4 0-7 2-7 5s3 5 7 5"/>
+        <path d="M34 16c4 0 7 2 7 5s-3 5-7 5"/>
+      </svg>
+      <h1>VerbaNullius</h1>
+      <p class="hero-tagline">VerbaNullius, OmniaProba — Origin-Aware Verification for the AI Age</p>
+      <p style="font-size: var(--text-sm); color: var(--color-text-muted); margin-top: var(--space-2); font-family: var(--font-mono);">by Florian Marty</p>
+      <p class="hero-problem" id="hero-problem-text"></p>
+      <div class="stats-bar">
+        <span class="stat"><strong>9</strong> Modules</span>
+        <span class="stat"><strong>30</strong> Patterns</span>
+        <span class="stat"><strong>7</strong> Domains</span>
+<span class="stat">Peer-Reviewed</span>
+      </div>
+      <div class="hero-ctas">
+        <button class="btn-primary" data-nav="workflow">Explore Workflow <span aria-hidden="true">→</span></button>
+        <button class="btn-secondary" data-nav="patterns">Browse Patterns <span aria-hidden="true">→</span></button>
+      </div>
+    </section>
+
+    <section class="landing-section" id="the-problem">
+      <p class="section-label">The Problem</p>
+      <h2 class="section-heading">LLMs hallucinate with confidence</h2>
+      <p class="section-body" id="problem-text"></p>
+
+      <div style="margin-top: var(--space-6);">
+        <p class="section-label" style="margin-top: var(--space-6);">The Consequences</p>
+        <h3 class="section-heading">Courts are already sanctioning AI hallucinations</h3>
+        <p class="section-body" style="margin-bottom: var(--space-4);">When AI-generated falsehoods reach courtrooms, regulatory filings, or professional reports, the consequences are no longer hypothetical. Attorneys have been sanctioned, cases dismissed, and regulators have taken enforcement action.</p>
+
+        <div class="consequences-grid">
+          <div class="consequence-card">
+            <div class="consequence-card-header">
+              <svg class="consequence-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4m0 4h.01M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0z"/></svg>
+              <div>
+                <div class="consequence-card-title">ByoPlanet v. Johansson</div>
+                <div class="consequence-amount">$86,626 sanctions</div>
+              </div>
+            </div>
+            <div class="consequence-desc">Largest AI hallucination sanction to date. Attorney relied on ChatGPT-generated brief containing fabricated case citations. Court imposed the full cost of opposing counsel's fees.</div>
+            <div class="consequence-year">E.D. Va. · Aug 2025</div>
+          </div>
+
+          <div class="consequence-card">
+            <div class="consequence-card-header">
+              <svg class="consequence-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4m0 4h.01M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0z"/></svg>
+              <div>
+                <div class="consequence-card-title">Fletcher v. Experian</div>
+                <div class="consequence-amount">$2,500 fine · 21 fabrications</div>
+              </div>
+            </div>
+            <div class="consequence-desc">5th Circuit found 21 fabricated case citations in a single filing. Court imposed sanctions and referred attorney for disciplinary investigation.</div>
+            <div class="consequence-year">5th Cir. · Feb 2026</div>
+          </div>
+
+          <div class="consequence-card">
+            <div class="consequence-card-header">
+              <svg class="consequence-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4m0 4h.01M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0z"/></svg>
+              <div>
+                <div class="consequence-card-title">Noland v. Land of the Free</div>
+                <div class="consequence-amount">$10,000 sanction · 21 of 23 citations fabricated</div>
+              </div>
+            </div>
+            <div class="consequence-desc">California Appeals court found 21 of 23 cited cases were entirely fictitious. Attorney had submitted the AI output without any verification.</div>
+            <div class="consequence-year">Cal. App. · 2025</div>
+          </div>
+
+          <div class="consequence-card">
+            <div class="consequence-card-header">
+              <svg class="consequence-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4m0 4h.01M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0z"/></svg>
+              <div>
+                <div class="consequence-card-title">MyPillow / Lindell Case</div>
+                <div class="consequence-amount">$3,000 per attorney · 20+ errors</div>
+              </div>
+            </div>
+            <div class="consequence-desc">Multiple attorneys sanctioned for AI-generated filings containing fabricated citations and non-existent legal precedents. Court noted pattern of unverified AI reliance.</div>
+            <div class="consequence-year">D. Minn. · Jul 2025</div>
+          </div>
+
+          <div class="consequence-card">
+            <div class="consequence-card-header">
+              <svg class="consequence-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4m0 4h.01M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0z"/></svg>
+              <div>
+                <div class="consequence-card-title">FTC vs. DoNotPay &amp; Rytr</div>
+                <div class="consequence-amount">Regulatory enforcement</div>
+              </div>
+            </div>
+            <div class="consequence-desc">FTC cracked down on AI tools generating fabricated legal documents and deceptive content. Enforcement actions established that AI hallucinations in consumer-facing products trigger regulatory liability.</div>
+            <div class="consequence-year">FTC · 2024–2025</div>
+          </div>
+
+          <div class="consequence-card">
+            <div class="consequence-card-header">
+              <svg class="consequence-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 9v4m0 4h.01M3 12a9 9 0 1 1 18 0 9 9 0 0 1-18 0z"/></svg>
+              <div>
+                <div class="consequence-card-title">Boston v. Williams</div>
+                <div class="consequence-amount">17 of 24 citations hallucinated</div>
+              </div>
+            </div>
+            <div class="consequence-desc">Northern District of Georgia found the vast majority of cited legal authorities were fabricated by AI. Highlighted the systematic nature of LLM citation hallucination.</div>
+            <div class="consequence-year">N.D. Ga. · 2024</div>
+          </div>
+        </div>
+
+        <div class="consequences-stat">
+          <div class="consequences-stat-number">239+ documented cases</div>
+          <div class="consequences-stat-label">AI hallucination incidents in U.S. legal filings alone (Charlotin database), with 712+ judicial decisions worldwide addressing AI-generated falsehoods</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="landing-section" id="principles">
+      <p class="section-label">Core Principles</p>
+      <h2 class="section-heading">Five rules that guide every verification</h2>
+      <ol class="principles-list" id="principles-list" role="list"></ol>
+    </section>
+
+    <section class="landing-section" id="audiences">
+      <p class="section-label">Who This Is For</p>
+      <h2 class="section-heading">Built for high-stakes decision makers</h2>
+      <ul class="audience-list" id="audience-list" role="list"></ul>
+    </section>
+
+    <section class="landing-section" id="research">
+      <p class="section-label">Built on Research</p>
+      <h2 class="section-heading">Peer-reviewed foundations</h2>
+      <ul class="research-list" id="research-list" role="list"></ul>
+    </section>
+  </div>
+
+  <!-- ═══ VIEW 2: WORKFLOW ═══ -->
+  <div class="view" id="view-workflow" role="tabpanel">
+    <div class="workflow-header">
+      <h2>Verification Pipeline</h2>
+      <p id="workflow-desc"></p>
+    </div>
+
+    <div class="pipeline-wrap" aria-label="Pipeline diagram showing modules M0 through M9">
+      <div class="pipeline" id="pipeline-diagram"></div>
+    </div>
+
+    <div class="module-cards" id="module-cards"></div>
+  </div>
+
+  <!-- ═══ VIEW 3: PATTERNS ═══ -->
+  <div class="view" id="view-patterns" role="tabpanel">
+    <div class="catalog-header">
+      <div class="catalog-header-left">
+        <h2>Pattern Catalog</h2>
+        <p>30 hallucination patterns across 7 domains</p>
+      </div>
+      <div class="catalog-view-toggle">
+        <button class="catalog-view-btn active" data-catalog-view="cards">Cards</button>
+        <button class="catalog-view-btn" data-catalog-view="map">Map</button>
+      </div>
+    </div>
+
+    <div class="catalog-filters" id="catalog-filters"></div>
+
+    <div class="pattern-cards-view active" id="pattern-cards-view">
+      <div class="pattern-grid" id="pattern-grid"></div>
+    </div>
+
+    <div class="taxonomy-map-view" id="taxonomy-map-view">
+      <div class="taxonomy-container">
+        <table class="taxonomy-table" id="taxonomy-table" role="grid" aria-label="Taxonomy map of hallucination patterns by domain"></table>
+        <div class="severity-legend" id="severity-legend"></div>
+      </div>
+      <div class="taxonomy-tooltip" id="taxonomy-tooltip">
+        <div class="taxonomy-tooltip-id"></div>
+        <div class="taxonomy-tooltip-name"></div>
+        <div class="taxonomy-tooltip-severity"></div>
+        <div class="taxonomy-tooltip-desc"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VIEW 4: EXAMPLES ═══ -->
+  <div class="view" id="view-examples" role="tabpanel">
+    <div class="examples-header">
+      <h2>Verification Examples</h2>
+      <p>Real-world claims verified through the VerbaNullius pipeline. Click a card to see the full analysis.</p>
+    </div>
+
+    <div class="examples-grid" id="examples-grid">
+      <!-- Cards rendered dynamically from examples.json -->
+    </div>
+  </div>
+
+  <!-- ═══ VIEW 5: ABOUT ═══ -->
+  <div class="view" id="view-about" role="tabpanel">
+    <div class="placeholder-view">
+      <svg class="placeholder-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="24" cy="14" r="8"/>
+        <path d="M10 40c0-7.7 6.3-14 14-14s14 6.3 14 14"/>
+      </svg>
+      <h2>About VerbaNullius</h2>
+      <p>The story behind the framework — from initial research to a modular verification system built to catch what AI gets wrong.</p>
+      <span class="placeholder-badge">Coming Soon</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <span>VerbaNullius v3.1 · Created by Florian Marty &amp; <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Perplexity Computer</a> · Built on peer-reviewed research</span>
+  <span class="footer-disclaimer">This framework is provided for informational and research purposes only. It does not constitute legal, financial, or professional advice. Results should be validated by qualified professionals before acting on them.</span>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════════════════ */
+const PATTERN_DATA = {"domains":[{"id":"TAIL","name":"Tail Fact Patterns","description":"Low-frequency, long-tail entities — people, organizations, niche products","color":"#a13544","patterns":[{"id":"TAIL-01","name":"Generated Golem","severity":"ALARMING","what":"Fabrication of non-existent entities — people, organizations, software packages, events. Model generates plausible-sounding names with no real-world referent.","spot":["Entity absent from authoritative knowledge bases (Wikidata, DBLP, EDGAR, PubMed)","Zero independent web hits for the specific entity name","Package/library name absent from package index"],"verify":["Search entity name in Wikidata/Wikipedia — if absent, flag immediately","Search \"[name] [affiliation]\" — zero results is strong disconfirming signal","For organizations: check company registries, regulatory databases, news archives"],"sources":"Rawte et al. 2023 (EMNLP); Ravichander et al. 2025 (HALOGEN — ACL)"},{"id":"TAIL-02","name":"Long-Tail Entity Collapse","severity":"ALARMING","what":"For rare entities, model substitutes a more common entity or merges attributes of multiple entities into one chimera. Entities in highest perplexity tier show dramatically higher fabrication rates.","spot":["Rare entities appearing only in niche sources (trade press, local filings)","Stated attribute set seems to blend characteristics of two similar entities"],"verify":["Verify that stated attribute set belongs to ONE entity, not a blend","Search for similarly-named entities in the same domain","Cross-reference specific attributes independently"],"sources":"WildHallucinations (Zhao et al. 2024); Kandpal et al. 2023"},{"id":"TAIL-03","name":"Non-Wikipedia Knowledge Gap","severity":"MODERATE–ALARMING","what":"Entities without Wikipedia pages hallucinate at consistently higher rates. 52% of evaluated entities lacked Wikipedia pages — these generated fabricated details at significantly higher rates.","spot":["Target entity has no Wikipedia page","Entity appears only in trade press or local filings with limited web footprint"],"verify":["Check for Wikipedia presence — if absent, elevate to Surprising prior","For startups/niche orgs: verify founding date, founders, funding rounds against Crunchbase, LinkedIn, company registry independently"],"sources":"WildHallucinations (Zhao et al. 2024)"},{"id":"TAIL-04","name":"Virtual Voice","severity":"MODERATE–ALARMING","what":"Misattributed quotes — model assigns statements to a person who never said them, or invents plausible-sounding quotations wholesale.","spot":["Quoted text returns zero exact-match results in news or academic search","Quote is stylistically consistent but cannot be traced to a specific speech, publication, or interview"],"verify":["Search exact quoted phrase in quotation marks — zero results = fabrication signal","Search \"[person name] quote [key phrase]\"","For academic quotes: search in Google Scholar, Semantic Scholar"],"sources":"Rawte et al. 2023 (EMNLP)"}]},{"id":"NUM","name":"Numerical Commitment Patterns","description":"Any number, statistic, financial figure, date, or citation in the document","color":"#da7101","patterns":[{"id":"NUM-01","name":"Numeric Nuisance","severity":"ALARMING","what":"Fabrication or distortion of numbers — statistics, percentages, financial figures. Model generates numbers that fit the expected range but are wrong.","spot":["Number is suspiciously round or suspiciously precise","No citation or source provided for the figure","Value sits at the 'typical midpoint' for its category"],"verify":["Search for the specific figure + company/source name","Compare against primary source (10-K, WHO report, regulatory filing)","Find two independent sources — if they disagree, apply conflicting-sources procedure"],"sources":"Rawte et al. 2023; AI21 Labs 2025"},{"id":"NUM-02","name":"Unit / Sign Confusion","severity":"ALARMING","what":"Misreading or swapping units (millions ↔ billions, USD ↔ EUR), missing a negative sign, or confusing growth rate with absolute value.","spot":["Financial figure is off by exactly 10× or 1,000× from context","Sign of operating income contradicts narrative context","Currency or unit changes between two references to the same figure"],"verify":["Cross-check unit against source table header or filing context","Verify sign of income figures against actual filing","For currency conversions: verify both the rate used and the direction"],"sources":"Intuition Labs 2026; Deloitte 2025"},{"id":"NUM-03","name":"Temporal Date Fabrication","severity":"MODERATE–ALARMING","what":"Model invents specific dates (DD-MM-YYYY) for events, especially for rare entities. Multiple runs of the same query yield different fabricated dates.","spot":["Date is suspiciously precise for an obscure event","Date defaults to January 1 or a famous person's birthday","Causal ordering of events seems inconsistent with claimed dates"],"verify":["Search \"[event] date\" against primary source","For founding dates: check company registry, Crunchbase, early press coverage"],"sources":"Kalai et al. 2025 (OpenAI — 'Why Language Models Hallucinate')"},{"id":"NUM-04","name":"Statistical Improbability","severity":"MODERATE","what":"Model outputs statistics that are linguistically plausible but violate domain constraints — percentages >100%, impossible survival rates, growth rates defying sector norms.","spot":["Percentage outside [0, 100] range","CAGR >50% for a mature sector","Clinical trial outcome metric exceeds enrolled population"],"verify":["Apply domain sanity check first (is this number physically/logically possible?)","If passes sanity check, verify against primary source"],"sources":"AI21 Labs 2025; Evidently AI 2025"},{"id":"NUM-05","name":"Phantom Citation","severity":"ALARMING","what":"Model invents academic citations (author names, journal, year, DOI) that do not exist. GPT-4 hallucinated 28.6% of citations in medical reviews.","spot":["DOI returns 404","Author–title combination absent from PubMed, Semantic Scholar, or Google Scholar","Journal name is plausible but non-existent or subtly misspelled"],"verify":["Resolve DOI directly — if 404, flag immediately","Search \"[Author surname] [key title word] [journal name]\" in Semantic Scholar","Verify journal existence independently"],"sources":"Deloitte 2025; Cossio 2025 (arXiv:2508.01781)"}]},{"id":"MA","name":"M&A Claim Patterns","description":"Any merger, acquisition, IPO, deal term, regulatory ruling, or valuation claim","color":"#964219","patterns":[{"id":"MA-01","name":"Phantom M&A Deal","severity":"ALARMING","what":"Model fabricates entire mergers, acquisitions, or IPO events that never occurred. Often combines real company names with invented transaction details.","spot":["Deal not found in EDGAR, SEC filings, Refinitiv, or Bloomberg","No contemporary press release or 8-K filing","Deal would have been major news but no news archive entries exist"],"verify":["Search \"[Acquirer] acquired [Target]\" + year in news archives","Check EDGAR for 8-K filings around claimed date","Check Crunchbase or PitchBook for the named transaction"],"sources":"Intuition Labs 2026; Deloitte 2025"},{"id":"MA-02","name":"Deal Detail Chimera","severity":"ALARMING","what":"A real deal exists, but model conflates terms from multiple transactions — wrong price, wrong acquirer, wrong date, or wrong structure.","spot":["Core deal facts verifiable but specific terms cannot be confirmed","Cited price matches a different deal in the same sector"],"verify":["Verify each atomic claim INDEPENDENTLY: acquirer, target, date, price, currency, structure","Cross-reference against at least 2 sources (SEC filing + major news wire)","Check for similarly-structured deals in the same sector"],"sources":"Deloitte 2025; Intuition Labs 2026"},{"id":"MA-03","name":"Valuation Hallucination","severity":"ALARMING","what":"Model invents enterprise value, deal multiples, or implied valuation metrics that sound reasonable for the sector but are fabricated.","spot":["Valuation figure not in any 8-K, proxy statement, or analyst report","Implied multiple is suspiciously round (e.g., exactly 10×)","Figure was 'never publicly disclosed' but stated with certainty"],"verify":["Search for specific valuation figure in SEC filings, proxy statements, analyst coverage","Calculate implied multiple and check against sector norms"],"sources":"Deloitte 2025; ESMA/Turing 2025"},{"id":"MA-04","name":"Regulatory / Timeline Fabrication","severity":"MODERATE–ALARMING","what":"Model invents regulatory approval dates, antitrust review outcomes, or deal closing timelines. May claim a deal was blocked or approved when the opposite occurred.","spot":["Specific regulatory ruling date stated with certainty","Approval 'with no conditions' for a deal that would face scrutiny","Timeline inconsistency (deal 'closed' before regulatory review completed)"],"verify":["Check FTC/EC/CMA official press releases for named deal","Verify specific ruling date against agency's public docket","Cross-check deal close date against regulatory review timeline norms"],"sources":"Deloitte 2025"}]},{"id":"GEN","name":"General Hallucination Patterns","description":"Structural failure modes that can appear in any domain","color":"#006494","patterns":[{"id":"GEN-01","name":"Acronym Ambiguity","severity":"MILD–MODERATE","what":"Model expands an acronym incorrectly or confuses two acronyms sharing letters. Especially dangerous in technical and regulatory contexts.","spot":["Acronym expansion changes between paragraphs in the same output","Expansion is plausible in general context but wrong for the specific domain"],"verify":["Cross-reference acronym expansion against domain-specific glossary or regulatory definition","If expansion varies within the document, flag immediately"],"sources":"Rawte et al. 2023 (EMNLP)"},{"id":"GEN-02","name":"Geographic Erratum","severity":"MODERATE","what":"Incorrect geographic claims — wrong country, city, continent, or institutional location. Model assigns entities to plausible but wrong locations.","spot":["A city is placed in the wrong country","Company HQ is given as a major city in the right country but wrong city","Institution location contradicts its official website"],"verify":["Verify location against official institutional website or authoritative geographic database","Search \"[entity name] location\" or \"[entity name] headquarters\""],"sources":"Rawte et al. 2023 (EMNLP)"},{"id":"GEN-03","name":"Time Wrap / Temporal Displacement","severity":"MODERATE–ALARMING","what":"Model places events in the wrong time period, confuses historical sequence, or treats outdated facts as current.","spot":["Claim uses 'currently' or present tense for a status that may have changed","Causal ordering of events is internally inconsistent","Event date predates the founding of the named entity"],"verify":["Verify event date against primary source with date filter","For 'current' status: add current year to search query","Verify causal sequence against timeline evidence"],"sources":"Rawte et al. 2023; Cossio 2025 (arXiv:2508.01781)"},{"id":"GEN-04","name":"Snowball Confabulation","severity":"ALARMING","what":"An early incorrect token triggers cascading fabrications. The model builds increasingly elaborate false context to remain internally consistent with the initial error.","spot":["An early claim in the document is disproven","Downstream claims have unusual density of specific details that 'build on' the early claim"],"verify":["If ANY early claim is disproven, immediately re-examine ALL downstream claims that reference it","Do not assume downstream claims can be independently true if they logically require the false early claim"],"sources":"Zhang et al. 2023 (snowball effect); Jeong 2024 (context hijacking)"},{"id":"GEN-05","name":"High-Confidence Delusion","severity":"ALARMING","what":"Hallucination generated with abnormally high model confidence — resistant to self-reflection, chain-of-thought, and prompt-based corrections.","spot":["Model states a specific fact with certainty but the claim cannot be sourced","Re-prompting with corrections does not change the output","Semantic entropy is low but claim contradicts external evidence"],"verify":["Treat high-confidence uncited claims as Surprising prior regardless of tone","Specifically seek contradicting sources — do not accept 'not contradicted' as confirmation"],"sources":"Xu et al. 2025 ('Delusions of LLMs')"},{"id":"GEN-06","name":"Imitative Falsehood","severity":"MODERATE","what":"Model reproduces a common misconception present in training data. Not fabrication but faithful reproduction of widely-held false beliefs.","spot":["Claim matches a known popular misconception in the domain","Multiple sources confirm the claim, but they are all secondary sources repeating each other"],"verify":["Check against myth-debunking resources or primary historical/scientific sources","For scientific claims: look for systematic reviews or meta-analyses"],"sources":"Alansari & Luqman 2025; Lin et al. 2022"}]},{"id":"VIZ","name":"Visualization / Artifact Patterns","description":"Charts, graphs, heatmaps, and AI-generated visual artifacts used as evidence","color":"#7a39bb","patterns":[{"id":"VIZ-01","name":"Formatting Inconsistency Signal","severity":"HIGH","what":"A single cell breaking an otherwise consistent formatting pattern is diagnostic of text-to-chart transformation that did not pass through human typesetting.","spot":["Negative value cell has a different format from positive cells","Sign/symbol inconsistencies within a single chart or table"],"verify":["Flag VIZ-01 + VIZ-05","Auto-escalate ALL numeric claims from same artifact to 'Surprising' prior"],"sources":"VerbaNullius v3.1 field observation"},{"id":"VIZ-02","name":"Non-Reproducible Chart","severity":"HIGH","what":"Chart presented with no data table or code provided. Classified as non-reproducible by default — cannot be tied back to verifiable data.","spot":["Image/chart/heatmap/graph with no data table or code provided","Visual artifact looks analytically rigorous but has no provenance"],"verify":["Require data table + code + artifact bundle before allowing use as evidence","If bundle cannot be produced, mark as 'scenario art' only"],"sources":"VerbaNullius v3.1; OWASP LLM09"},{"id":"VIZ-03","name":"Fabricated Range Intervals","severity":"MEDIUM–HIGH","what":"Growth/decline ranges with suspiciously even spacing (0-2, 2-4, 4-6) that appear in no external source — LLM-fabricated scenario, not measured data.","spot":["Range breakpoints have 'pretty' regular spacing","Ranges appear in no external source"],"verify":["Cross-check range breakpoints against public filings, analyst reports, or earnings transcripts","If ranges have systematically round intervals, classify as LLM-fabricated"],"sources":"VerbaNullius v3.1 field observation"},{"id":"VIZ-04","name":"Default Chart Type Signal","severity":"MEDIUM","what":"Chart type matches LLM coding defaults rather than domain practice — reduces probability that a human analyst selected it deliberately.","spot":["Heatmap/bar/line chart with no stated reason for chart type","Chart type matches LLM defaults: line (time axis), bar (1 categorical), heatmap (2 categorical)"],"verify":["Compare chart type against domain conventions","For corporate planning: grouped bars or tables with conditional formatting are more common than heatmaps"],"sources":"VerbaNullius v3.1 field observation"},{"id":"VIZ-05","name":"Incomplete AI Disclosure","severity":"MEDIUM–HIGH","what":"AI involvement is disclosed but no provenance label or quality caveat accompanies it — converts disclosure from transparency into implicit endorsement.","spot":["'Entirely/completely/fully AI-generated' stated without provenance","No classification: 'AI-generated scenario' vs 'AI-assisted analysis of real data' vs 'AI-formatted presentation of verified data'"],"verify":["Require explicit classification of AI involvement level","Flag as incomplete disclosure if quality caveat is missing"],"sources":"VerbaNullius v3.1 field observation"}]},{"id":"PERF","name":"Performance / Authority Patterns","description":"Authority-based amplification and structural audit requirements for AI-generated artifacts","color":"#a12c7b","patterns":[{"id":"PERF-01","name":"Three-Artifact Rule Violation","severity":"HIGH","what":"Chart used in high-stakes context missing required provenance: (A) machine-readable data table with source attribution, (B) code/recipe, (C) the visual artifact.","spot":["Chart in strategy/investor/regulatory/clinical context","Missing data table OR missing code"],"verify":["Enforce three-artifact rule: data table + code + visual","If code cannot be produced on request, mark chart as non-auditable","Prohibit use as evidence if provenance incomplete"],"sources":"VerbaNullius v3.1 field observation"},{"id":"PERF-02","name":"Authority Borrowing","severity":"HIGH","what":"Senior figure shares AI-generated artifacts without provenance labeling — implicit authority endorsement causes downstream acceptance without verification.","spot":["Senior title (VP/President/Director/CEO/GM) shares/presents/endorses AI-generated content","No provenance labeling on shared artifacts"],"verify":["Assess: was provenance labeled?","Were caveats included?","Was it presented as evidence or illustration?"],"sources":"VerbaNullius v3.1 field observation"}]},{"id":"DET","name":"Detection Meta-Signals","description":"Multi-run detection heuristics requiring N repeated queries — NOT single-turn applicable","color":"#7a7974","patterns":[{"id":"DET-01","name":"Length Anomaly Signal","severity":"META","what":"Response length variability and mean response length correlate with hallucination. Simple length heuristics match or exceed Semantic Entropy in some benchmarks.","spot":["Unusually long or highly variable outputs across multiple runs","Mean-Len outlier compared to baseline for similar queries"],"verify":["Compute mean and std of response length across N samples","High Std-Len or outlier Mean-Len is a simple but competitive hallucination detector"],"sources":"Agarwal et al. 2025 (EMNLP)"},{"id":"DET-02","name":"Sampling Inconsistency","severity":"META","what":"When the same question is asked N times (temperature > 0), hallucinated facts change across samples while true facts remain stable.","spot":["Atomic facts appearing in <50% of runs are hallucination candidates","Facts change across repeated samples while true facts remain stable"],"verify":["Run 5-10 generations and track atomic fact consistency","Semantic entropy across runs is a strong and validated hallucination detector"],"sources":"Farquhar et al. 2024 (Nature)"}]}]};
+
+const WORKFLOW_DATA = {"modules": [{"id": "M0", "name": "Research Update", "skill": "llamasheppard-research", "required": false, "short": "Searches academic databases for the latest hallucination detection research and verification methods before analysis begins.", "purpose": "Ensures the verification runs on current science. Queries academic literature (arXiv, Semantic Scholar, EMNLP) for new hallucination patterns, detection methods, and EDFL framework updates.", "inputs": ["Session metadata", "User opt-in"], "outputs": ["m0_research_update.md — latest findings"], "key_concepts": ["Academic literature search", "EDFL framework updates", "New pattern detection methods"], "icon": "🔬", "color": "#6daa45", "sources": "Rawte et al. 2023 (EMNLP); Ravichander et al. 2025 (HALOGEN — ACL)"}, {"id": "M1", "name": "Intake & Scope Gate", "skill": "llamasheppard-intake", "required": true, "short": "First mandatory gate — checks if content is in scope, sufficient for analysis, and classifies its format and origin.", "purpose": "Validates that the input content is suitable for verification. Performs format detection (long-form, short claim, structured data), origin classification (LLM-generated, human-authored, unknown), and applies the veto rule for out-of-scope content.", "inputs": ["input.txt — raw user content", "session_metadata.json — origin declaration"], "outputs": ["m1_intake.json — scope decision, format, sufficiency rating"], "key_concepts": ["Scope gate", "Veto rule", "Format detection", "Origin classification", "Content sufficiency check"], "icon": "🚪", "color": "#5591c7", "sources": "Kalai et al. 2025 (OpenAI) — Why models hallucinate; Cossio 2025 — Hallucination taxonomy"}, {"id": "M2", "name": "Claim Extraction", "skill": "llamasheppard-extract", "required": true, "short": "Decomposes input into atomic verifiable claims, tags entities by type, and assigns prior plausibility ratings.", "purpose": "FActScore-style atomic decomposition: every verifiable fact becomes an independent claim. Entities are tagged (person, org, number, citation, location, date) and each claim receives a prior plausibility rating (Common, Specific, Surprising) that drives downstream search intensity.", "inputs": ["input.txt", "m1_intake.json"], "outputs": ["m2_claims.json — atomic claims with entity tags and priors"], "key_concepts": ["Atomic decomposition (FActScore)", "Entity-type tagging", "Prior plausibility (Common/Specific/Surprising)", "Claim independence principle"], "icon": "🔎", "color": "#da7101", "sources": "Min et al. 2023 (FActScore — EMNLP); Ravichander et al. 2025 (HALOGEN — ACL); Kamoi et al. 2023 — Atomic claim decomposition"}, {"id": "M3", "name": "Kinetics (IKPPA)", "skill": "llamasheppard-kinetics", "required": true, "short": "Profiles how claims propagate using 5 kinetic indicators — a content-free approach to estimating misinformation risk.", "purpose": "Information Kinetics and Propagation Pattern Analysis (IKPPA) evaluates claims not by their content but by their spread dynamics. Uses 5 indicators: Source Multiplicity, Temporal Coherence, Semantic Drift, Authority Gradient, and Cross-Domain Echo to compute a kinetic risk multiplier.", "inputs": ["m2_claims.json"], "outputs": ["m3_kinetics.json — kinetic risk profile per claim"], "key_concepts": ["Source Multiplicity", "Temporal Coherence", "Semantic Drift", "Authority Gradient", "Cross-Domain Echo", "Kinetic risk multiplier"], "icon": "📡", "color": "#a12c7b", "sources": "Farquhar et al. 2024 (Nature) — Semantic entropy; Xu et al. 2025 — High-confidence delusions"}, {"id": "M4", "name": "Auto-Flag Pattern Scan", "skill": "llamasheppard-autoflag", "required": true, "short": "Scans all claims against 30 entity-type patterns and 17 syntactic triggers — the pattern library built from peer-reviewed research and field observations.", "purpose": "Two-layer detection: (1) Claim-Type Reference — matches entity types to known LLM hallucination failure modes (30 patterns across 7 domains); (2) Living Pattern Library — matches syntactic triggers observed in real verification runs (17 entries). Includes visualization artifact scanning, three-artifact rule enforcement, and authority borrowing detection.", "inputs": ["m2_claims.json", "m3_kinetics.json", "Claim-Type Reference", "Living Pattern Library"], "outputs": ["m4_flags.json — flagged claims with pattern IDs, severity, verification strategy"], "key_concepts": ["30 claim-type patterns (7 domains)", "17 syntactic triggers", "Dual-layer detection", "Visualization artifact scanning", "Three-artifact rule"], "icon": "🚩", "color": "#a13544", "sources": "Rawte et al. 2023 (EMNLP); Zhao et al. 2024 (WildHallucinations); Agarwal et al. 2025 (EMNLP) — Length anomaly detection; Zhang et al. 2023 — Snowball confabulation"}, {"id": "M5", "name": "Inverted Search Priority", "skill": "llamasheppard-search", "required": true, "short": "Searches for DISCONFIRMING evidence first, inverting the natural confirmation bias. Most suspicious claims get searched first.", "purpose": "The core innovation: instead of searching for evidence that confirms claims (which reinforces hallucinations), the system searches for evidence that would DISPROVE them. Claims are searched in inverse plausibility order — the most suspicious and surprising claims get priority. Uses web search, academic search, and targeted database queries.", "inputs": ["m2_claims.json", "m3_kinetics.json", "m4_flags.json"], "outputs": ["m5_search.json — evidence profile per claim (confirming, disconfirming, absent)"], "key_concepts": ["Inverted Search Priority", "Disconfirming evidence first", "Inverse plausibility ordering", "Multi-source verification", "5-question gap-detection checkpoint"], "icon": "🔄", "color": "#01696f", "sources": "Dhuliawala et al. 2023 — Chain-of-Verification (CoVe); Manakul et al. 2023 (SelfCheckGPT — EMNLP)"}, {"id": "M6", "name": "Negative Evidence Analysis", "skill": "llamasheppard-negative", "required": true, "short": "Evaluates when ABSENCE of evidence is meaningful. A missing Wikipedia page means nothing for a startup — but everything for a Fortune 500 company.", "purpose": "Entity Visibility Calibration: determines whether absence of evidence is informative based on what SHOULD exist for the entity type. A publicly traded company should have SEC filings; a niche startup might not. Classifies each 'not found' result as Informative Absence (entity should be visible) or Expected Absence (entity is legitimately obscure).", "inputs": ["m2_claims.json", "m5_search.json"], "outputs": ["m6_negative.json — visibility-calibrated absence analysis"], "key_concepts": ["Entity Visibility Calibration", "Informative vs. Expected Absence", "Evidence of absence ≠ absence of evidence", "Visibility tier classification"], "icon": "👁️", "color": "#964219", "sources": "Kandpal et al. 2023 — Entity frequency and hallucination; Zhao et al. 2024 (WildHallucinations) — Non-Wikipedia knowledge gaps"}, {"id": "M7", "name": "Cross-Model Tribunal", "skill": "llamasheppard-tribunal", "required": true, "short": "Re-verifies contested claims using a DIFFERENT AI model — because a model cannot reliably detect its own hallucinations.", "purpose": "Chain-of-Verification factored independence: flagged and contested claims are re-verified by a different AI model than the one that performed the primary analysis. This breaks the self-verification loop — if both models agree on a fabrication, confidence in the flag increases. If they disagree, the claim gets elevated scrutiny.", "inputs": ["m2_claims.json", "m4_flags.json", "m5_search.json", "m6_negative.json"], "outputs": ["m7_tribunal.json — cross-model consensus per contested claim"], "key_concepts": ["Factored independence", "Cross-model verification", "Self-verification bias prevention", "Chain-of-Verification (CoVe)"], "icon": "⚖️", "color": "#7a39bb", "sources": "Dhuliawala et al. 2023 — CoVe factored independence; Manakul et al. 2023 (SelfCheckGPT — EMNLP); Cohen et al. 2023 — Cross-model consistency"}, {"id": "M8", "name": "Verdict (B2T/ISR)", "skill": "llamasheppard-verdict", "required": true, "short": "Computes Bits-to-Trust and Information Sufficiency Ratio for each claim, applies the Evidence Sufficiency Matrix, and generates the final verdict.", "purpose": "The quantification layer. Uses the EDFL (Expectation Decompression Framework for LLMs) to compute: B2T (Bits-to-Trust) — how much evidence is needed to trust a claim based on its prior plausibility, and ISR (Information Sufficiency Ratio) — whether enough evidence exists. Applies the 3×3 Evidence Sufficiency Matrix (Common/Specific/Surprising × Strong/Partial/Absent) to reach a per-claim verdict: Endorse, Hedge, Flag, or Abstain.", "inputs": ["All preceding module outputs (m1-m7)"], "outputs": ["m8_verdict.md — full verification report", "m8_verdict.json — structured data", "New pattern entries for living library"], "key_concepts": ["B2T (Bits-to-Trust)", "ISR (Information Sufficiency Ratio)", "EDFL framework", "Evidence Sufficiency Matrix (3×3)", "Verdict: Endorse/Hedge/Flag/Abstain", "Living library expansion"], "icon": "📊", "color": "#006494", "sources": "Farquhar et al. 2024 (Nature) — Semantic entropy; Kalai et al. 2025 (OpenAI); Deloitte 2025 — M&A hallucination risks"}, {"id": "M9", "name": "Report Card", "skill": "llamasheppard-example-report", "required": false, "short": "Synthesizes the full verification into a front/back report card — a severity-calibrated summary designed for public presentation.", "purpose": "Generates a two-sided report card from the M8 verdict. The front face shows the original claim image, claim type, author, date checked, B2T trust score, claim breakdown bar, and identified patterns — with a verdict stamp (Rejected/Flagged/Hedged/Endorsed) overlaid on the source material. The back face contains the full analytical breakdown: quoted original, severity-calibrated summary, claim-by-claim verdicts, key finding comparison, and an expandable full report with download link. Tone is calibrated to severity — high-stakes conspiracy claims receive appropriately direct language.", "inputs": ["m8_verdict.md — full verification report", "Original source screenshot/image", "Session metadata"], "outputs": ["Report card HTML component (front/back)", "Downloadable .md report"], "key_concepts": ["Severity-calibrated tone (Critical/High/Moderate/Low)", "Front/back card format", "Verdict stamp overlay", "B2T score + claim breakdown visualization", "Expandable full report"], "icon": "📋", "color": "#546e7a", "sources": "VerbaNullius framework — synthesized from all preceding modules"}], "framework": {"name": "VerbaNullius", "version": "3.1", "tagline": "VerbaNullius, OmniaProba — Origin-Aware Verification for the AI Age", "problem": "LLMs hallucinate with confidence. They fabricate entities, invent citations, confuse financial figures, and generate plausible-sounding falsehoods that pass casual inspection. In high-stakes domains — finance, healthcare, legal, M&A due diligence — undetected hallucinations create real risk.", "solution": "VerbaNullius is a 10-module verification pipeline that systematically detects and classifies LLM hallucinations. It inverts the natural confirmation bias (searching for disconfirming evidence first), profiles how claims propagate, matches against 30 peer-reviewed hallucination patterns, and quantifies trust using information-theoretic metrics.", "principles": ["Claim-Level Skepticism — each claim stands alone; proximity to verified facts confers no credibility", "Inverted Search Priority — search for disconfirming evidence FIRST", "Plausibility ≠ Verification — 'sounds reasonable' means 'search harder', not 'accept'", "Absence is calibrated — whether 'not found' matters depends on entity visibility", "Factored independence — no model verifies its own output"], "stats": {"patterns": 30, "domains": 7, "syntactic_triggers": 17, "modules": 10, "peer_reviewed_sources": 10}, "audiences": ["AI governance teams assessing LLM output reliability", "Due diligence analysts verifying AI-generated research", "Compliance officers building verification frameworks", "Researchers studying LLM hallucination detection", "Anyone using LLM output in high-stakes decisions"], "research_sources": ["Rawte et al. 2023 (EMNLP) — Hallucination taxonomy", "Ravichander et al. 2025 (HALOGEN — ACL) — Fabrication detection", "Zhao et al. 2024 (WildHallucinations) — Entity perplexity correlation", "Kalai et al. 2025 (OpenAI) — Why models hallucinate", "Farquhar et al. 2024 (Nature) — Semantic entropy", "Deloitte 2025 — M&A hallucination risks", "Zhang et al. 2023 — Snowball confabulation", "Xu et al. 2025 — High-confidence delusions", "Agarwal et al. 2025 (EMNLP) — Length anomaly detection", "Cossio 2025 — Comprehensive hallucination taxonomy"]}};
+
+/* ═══════════════════════════════════════════════════
+   THEME
+   ═══════════════════════════════════════════════════ */
+(function initTheme() {
+  const toggle = document.querySelector('[data-theme-toggle]');
+  const root = document.documentElement;
+  let theme = 'dark';
+  root.setAttribute('data-theme', theme);
+  updateToggleIcon(theme);
+
+  if (toggle) {
+    toggle.addEventListener('click', function() {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', theme);
+      toggle.setAttribute('aria-label', 'Switch to ' + (theme === 'dark' ? 'light' : 'dark') + ' mode');
+      updateToggleIcon(theme);
+    });
+  }
+
+  function updateToggleIcon(t) {
+    if (!toggle) return;
+    toggle.innerHTML = t === 'dark'
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  }
+})();
+
+/* ═══════════════════════════════════════════════════
+   NAV SCROLL BEHAVIOR
+   ═══════════════════════════════════════════════════ */
+(function initNavScroll() {
+  var nav = document.querySelector('.nav');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 10) {
+      nav.classList.add('scrolled');
+    } else {
+      nav.classList.remove('scrolled');
+    }
+  }, { passive: true });
+})();
+
+/* ═══════════════════════════════════════════════════
+   VIEW NAVIGATION
+   ═══════════════════════════════════════════════════ */
+var currentView = 'overview';
+
+function switchView(viewName) {
+  if (viewName === currentView) return;
+  currentView = viewName;
+
+  // Update tabs
+  document.querySelectorAll('.nav-tab').forEach(function(tab) {
+    var isActive = tab.getAttribute('data-view') === viewName;
+    tab.classList.toggle('active', isActive);
+    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+
+  // Update views
+  document.querySelectorAll('.view').forEach(function(v) {
+    v.classList.toggle('active', v.id === 'view-' + viewName);
+  });
+
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Update hash without triggering hashchange
+  history.replaceState(null, '', '#' + viewName);
+
+  // If switching to patterns and search has text, activate search
+  if (viewName === 'patterns') {
+    var q = document.getElementById('searchInput').value.trim();
+    if (q) filterPatterns();
+  }
+}
+
+// Nav tab clicks
+document.querySelectorAll('.nav-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    switchView(this.getAttribute('data-view'));
+  });
+});
+
+// CTA / brand clicks
+document.querySelectorAll('[data-nav]').forEach(function(el) {
+  el.addEventListener('click', function(e) {
+    e.preventDefault();
+    switchView(this.getAttribute('data-nav'));
+  });
+});
+
+/* ═══════════════════════════════════════════════════
+   POPULATE LANDING PAGE
+   ═══════════════════════════════════════════════════ */
+(function populateLanding() {
+  var fw = WORKFLOW_DATA.framework;
+
+  document.getElementById('hero-problem-text').textContent = fw.problem;
+  document.getElementById('problem-text').textContent = fw.problem + ' ' + fw.solution;
+
+  // Principles
+  var prinList = document.getElementById('principles-list');
+  fw.principles.forEach(function(p, i) {
+    var parts = p.split(' — ');
+    var li = document.createElement('li');
+    li.className = 'principle-item';
+    li.innerHTML = '<span class="principle-num">' + (i + 1) + '</span><div class="principle-text"><strong>' + escHtml(parts[0]) + '</strong> <span>— ' + escHtml(parts[1] || '') + '</span></div>';
+    prinList.appendChild(li);
+  });
+
+  // Audiences
+  var audList = document.getElementById('audience-list');
+  fw.audiences.forEach(function(a) {
+    var li = document.createElement('li');
+    li.className = 'audience-item';
+    li.textContent = a;
+    audList.appendChild(li);
+  });
+
+  // Research
+  var resList = document.getElementById('research-list');
+  fw.research_sources.forEach(function(r) {
+    var li = document.createElement('li');
+    li.className = 'research-item';
+    li.textContent = r;
+    resList.appendChild(li);
+  });
+})();
+
+/* ═══════════════════════════════════════════════════
+   POPULATE WORKFLOW
+   ═══════════════════════════════════════════════════ */
+(function populateWorkflow() {
+  var modules = WORKFLOW_DATA.modules;
+  var fw = WORKFLOW_DATA.framework;
+
+  document.getElementById('workflow-desc').textContent = fw.solution;
+
+  // Pipeline diagram
+  var pipeline = document.getElementById('pipeline-diagram');
+  var dataFlows = ['input.txt', 'm1_intake.json', 'm2_claims.json', 'm3_kinetics.json', 'm4_flags.json', 'm5_search.json', 'm6_negative.json', 'm7_tribunal.json', 'm8_verdict.md', 'report_card.html'];
+
+  var svgIcons = {
+      'M0': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>',
+      'M1': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18"/><path d="M3 9h6"/><path d="M3 15h6"/><path d="M13 8h4"/><path d="M13 12h4"/><path d="M13 16h4"/></svg>',
+      'M2': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="m16.24 16.24 2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="m16.24 7.76 2.83-2.83"/></svg>',
+      'M3': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/><path d="m16 6 2-2"/><path d="m18 8 2-2"/></svg>',
+      'M4': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>',
+      'M5': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg>',
+      'M6': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+      'M7': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="m2 15.5 10 5 10-5"/><path d="m2 11.5 10 5 10-5"/></svg>',
+      'M8': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+      'M9': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10"/><path d="M7 11h10"/><path d="M7 15h6"/><path d="m15 15 2 2 4-4"/></svg>'
+  };
+
+  modules.forEach(function(mod, i) {
+    // Node
+    var node = document.createElement('div');
+    node.className = 'pipeline-node' + (!mod.required ? ' optional' : '');
+    node.setAttribute('data-module-id', mod.id);
+    node.setAttribute('role', 'button');
+    node.setAttribute('tabindex', '0');
+    node.setAttribute('aria-label', mod.id + ': ' + mod.name);
+    node.innerHTML =
+      '<span class="pipeline-node-id">' + mod.id + '</span>' +
+      '<div class="pipeline-node-circle">' +
+        (svgIcons[mod.id] || '<span>' + mod.icon + '</span>') +
+      '</div>' +
+      '<span class="pipeline-node-name">' + escHtml(mod.name) + '</span>' +
+      (!mod.required ? '<span class="pipeline-node-badge">Optional</span>' : '') +
+      (i < dataFlows.length ? '<span class="pipeline-data-label">' + dataFlows[i] + '</span>' : '');
+    pipeline.appendChild(node);
+
+    node.addEventListener('click', function() {
+      scrollToModule(mod.id);
+    });
+    node.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scrollToModule(mod.id); }
+    });
+
+    // Connector arrow (except after last)
+    if (i < modules.length - 1) {
+      var conn = document.createElement('div');
+      conn.className = 'pipeline-connector';
+      conn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>';
+      pipeline.appendChild(conn);
+    }
+  });
+
+  // Module cards
+  var cardsContainer = document.getElementById('module-cards');
+  modules.forEach(function(mod) {
+    var card = document.createElement('div');
+    card.className = 'module-card';
+    card.id = 'module-' + mod.id;
+    card.innerHTML =
+      '<div class="module-card-header" role="button" tabindex="0" aria-expanded="false">' +
+        '<div class="module-card-accent" style="background:' + mod.color + '"></div>' +
+        '<span class="module-card-icon">' + (svgIcons[mod.id] || mod.icon) + '</span>' +
+        '<div class="module-card-info">' +
+          '<div class="module-card-top">' +
+            '<span class="module-card-id">' + mod.id + '</span>' +
+            '<span class="module-card-badge ' + (mod.required ? 'required' : 'optional') + '">' + (mod.required ? 'Required' : 'Optional') + '</span>' +
+          '</div>' +
+          '<div class="module-card-name">' + escHtml(mod.name) + '</div>' +
+          '<div class="module-card-short">' + escHtml(mod.short) + '</div>' +
+        '</div>' +
+        '<svg class="module-card-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 9 6 6 6-6"/></svg>' +
+      '</div>' +
+      '<div class="module-card-body">' +
+        '<div class="module-card-body-inner">' +
+          '<div><div class="module-detail-label">Purpose</div><div class="module-detail-text">' + escHtml(mod.purpose) + '</div></div>' +
+          '<div><div class="module-detail-label">Inputs</div><ul class="module-detail-list">' + mod.inputs.map(function(inp) { return '<li>' + escHtml(inp) + '</li>'; }).join('') + '</ul></div>' +
+          '<div><div class="module-detail-label">Outputs</div><ul class="module-detail-list">' + mod.outputs.map(function(out) { return '<li>' + escHtml(out) + '</li>'; }).join('') + '</ul></div>' +
+          '<div><div class="module-detail-label">Key Concepts</div><div class="module-concepts">' + mod.key_concepts.map(function(c) { return '<span class="concept-chip">' + escHtml(c) + '</span>'; }).join('') + '</div></div>' +
+          (mod.sources ? '<div><div class="module-detail-label">Sources</div><div class="module-detail-text" style="font-family:var(--font-mono);font-size:11px;color:var(--color-text-faint)">' + escHtml(mod.sources) + '</div></div>' : '') +
+        '</div>' +
+      '</div>';
+    cardsContainer.appendChild(card);
+
+    var header = card.querySelector('.module-card-header');
+    header.addEventListener('click', function() { toggleModuleCard(card); });
+    header.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleModuleCard(card); } });
+  });
+})();
+
+function toggleModuleCard(card) {
+  var wasExpanded = card.classList.contains('expanded');
+  card.classList.toggle('expanded');
+  card.querySelector('.module-card-header').setAttribute('aria-expanded', !wasExpanded);
+}
+
+function scrollToModule(moduleId) {
+  var card = document.getElementById('module-' + moduleId);
+  if (!card) return;
+  if (!card.classList.contains('expanded')) {
+    toggleModuleCard(card);
+  }
+  setTimeout(function() {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 50);
+}
+
+/* ═══════════════════════════════════════════════════
+   POPULATE PATTERN CATALOG
+   ═══════════════════════════════════════════════════ */
+var allPatterns = [];
+var activeFilters = { domains: new Set(), severities: new Set() };
+
+(function populateCatalog() {
+  // Flatten patterns
+  PATTERN_DATA.domains.forEach(function(domain) {
+    domain.patterns.forEach(function(p) {
+      allPatterns.push(Object.assign({}, p, { domain: domain.id, domainName: domain.name, domainColor: domain.color }));
+    });
+  });
+
+  // Build filters
+  var filtersContainer = document.getElementById('catalog-filters');
+
+  // Domain chips
+  var domainGroup = document.createElement('div');
+  domainGroup.className = 'filter-group';
+  domainGroup.innerHTML = '<span class="filter-group-label">Domain</span>';
+  PATTERN_DATA.domains.forEach(function(d) {
+    var chip = document.createElement('button');
+    chip.className = 'filter-chip';
+    chip.setAttribute('data-filter-type', 'domain');
+    chip.setAttribute('data-filter-value', d.id);
+    chip.textContent = d.id;
+    chip.style.setProperty('--chip-color', d.color);
+    chip.addEventListener('click', function() { toggleFilter('domain', d.id, this); });
+    domainGroup.appendChild(chip);
+  });
+  filtersContainer.appendChild(domainGroup);
+
+  // Separator
+  var sep = document.createElement('div');
+  sep.className = 'filter-separator';
+  filtersContainer.appendChild(sep);
+
+  // Severity chips
+  var severities = ['ALARMING', 'HIGH', 'MODERATE', 'MILD', 'META'];
+  var sevGroup = document.createElement('div');
+  sevGroup.className = 'filter-group';
+  sevGroup.innerHTML = '<span class="filter-group-label">Severity</span>';
+  severities.forEach(function(s) {
+    var chip = document.createElement('button');
+    chip.className = 'filter-chip';
+    chip.setAttribute('data-filter-type', 'severity');
+    chip.setAttribute('data-filter-value', s);
+    chip.textContent = s;
+    chip.addEventListener('click', function() { toggleFilter('severity', s, this); });
+    sevGroup.appendChild(chip);
+  });
+  filtersContainer.appendChild(sevGroup);
+
+  // Render cards
+  renderPatternCards(allPatterns);
+
+  // Build taxonomy
+  buildTaxonomyMap();
+
+  // Severity legend
+  buildSeverityLegend();
+})();
+
+function toggleFilter(type, value, chipEl) {
+  var set = type === 'domain' ? activeFilters.domains : activeFilters.severities;
+  if (set.has(value)) { set.delete(value); chipEl.classList.remove('active'); }
+  else { set.add(value); chipEl.classList.add('active'); }
+  filterPatterns();
+}
+
+function filterPatterns() {
+  var q = document.getElementById('searchInput').value.trim().toLowerCase();
+  var filtered = allPatterns.filter(function(p) {
+    // Domain filter
+    if (activeFilters.domains.size > 0 && !activeFilters.domains.has(p.domain)) return false;
+    // Severity filter
+    if (activeFilters.severities.size > 0) {
+      var sevNorm = normalizeSeverity(p.severity);
+      if (!activeFilters.severities.has(sevNorm)) return false;
+    }
+    // Search
+    if (q) {
+      var haystack = (p.id + ' ' + p.name + ' ' + p.what + ' ' + p.domain).toLowerCase();
+      if (haystack.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+  renderPatternCards(filtered);
+}
+
+function renderPatternCards(patterns) {
+  var grid = document.getElementById('pattern-grid');
+  grid.innerHTML = '';
+
+  if (patterns.length === 0) {
+    grid.innerHTML = '<div class="no-results">No patterns match the current filters.</div>';
+    return;
+  }
+
+  patterns.forEach(function(p) {
+    var sevClass = normalizeSeverity(p.severity).toLowerCase();
+    var card = document.createElement('div');
+    card.className = 'pattern-card';
+    card.setAttribute('data-pattern-id', p.id);
+    card.innerHTML =
+      '<div class="pattern-card-header" role="button" tabindex="0" aria-expanded="false">' +
+        '<div class="pattern-card-top">' +
+          '<span class="pattern-id" style="color:var(--domain-' + p.domain + ');--domaincolor:var(--domain-' + p.domain + ')">' + p.id + '</span>' +
+          '<span class="severity-badge ' + sevClass + '">' + escHtml(p.severity) + '</span>' +
+        '</div>' +
+        '<div class="pattern-name">' + escHtml(p.name) + '</div>' +
+        '<div class="pattern-desc">' + escHtml(p.what) + '</div>' +
+      '</div>' +
+      '<div class="pattern-card-body">' +
+        '<div class="pattern-card-body-inner">' +
+          '<div><div class="pattern-detail-label">How to Spot</div><ul class="pattern-detail-list">' + p.spot.map(function(s) { return '<li>' + escHtml(s) + '</li>'; }).join('') + '</ul></div>' +
+          '<div><div class="pattern-detail-label">How to Verify</div><ul class="pattern-detail-list">' + p.verify.map(function(v) { return '<li>' + escHtml(v) + '</li>'; }).join('') + '</ul></div>' +
+          '<div class="pattern-sources"><span class="pattern-detail-label">Sources</span><br>' + escHtml(p.sources) + '</div>' +
+          '<div><span class="pattern-domain-tag"><span style="width:8px;height:8px;border-radius:50%;background:var(--domain-' + p.domain + ');display:inline-block"></span> ' + escHtml(p.domainName) + '</span></div>' +
+        '</div>' +
+      '</div>';
+    grid.appendChild(card);
+
+    var header = card.querySelector('.pattern-card-header');
+    header.addEventListener('click', function() {
+      var wasExpanded = card.classList.contains('expanded');
+      card.classList.toggle('expanded');
+      header.setAttribute('aria-expanded', !wasExpanded);
+    });
+    header.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        var wasExpanded = card.classList.contains('expanded');
+        card.classList.toggle('expanded');
+        header.setAttribute('aria-expanded', !wasExpanded);
+      }
+    });
+  });
+}
+
+function expandPatternById(patternId) {
+  // Switch to cards view
+  switchCatalogView('cards');
+  // Switch to patterns view
+  if (currentView !== 'patterns') switchView('patterns');
+
+  // Clear filters
+  activeFilters.domains.clear();
+  activeFilters.severities.clear();
+  document.querySelectorAll('.filter-chip').forEach(function(c) { c.classList.remove('active'); });
+  document.getElementById('searchInput').value = '';
+  renderPatternCards(allPatterns);
+
+  setTimeout(function() {
+    var card = document.querySelector('[data-pattern-id="' + patternId + '"]');
+    if (card) {
+      if (!card.classList.contains('expanded')) {
+        card.classList.add('expanded');
+        card.querySelector('.pattern-card-header').setAttribute('aria-expanded', 'true');
+      }
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 100);
+}
+
+/* Taxonomy map */
+function buildTaxonomyMap() {
+  var table = document.getElementById('taxonomy-table');
+  var domains = PATTERN_DATA.domains;
+
+  // Find max patterns per domain
+  var maxPatterns = 0;
+  domains.forEach(function(d) { if (d.patterns.length > maxPatterns) maxPatterns = d.patterns.length; });
+
+  // Header row
+  var thead = '<thead><tr>';
+  domains.forEach(function(d) {
+    thead += '<th style="color:var(--domain-' + d.id + ')">' + d.id + '</th>';
+  });
+  thead += '</tr></thead>';
+
+  // Body rows
+  var tbody = '<tbody>';
+  for (var r = 0; r < maxPatterns; r++) {
+    tbody += '<tr>';
+    domains.forEach(function(d) {
+      if (r < d.patterns.length) {
+        var p = d.patterns[r];
+        var sevClass = normalizeSeverity(p.severity).toLowerCase();
+        var bgColor = 'var(--severity-' + sevClass + '-bg)';
+        var textColor = 'var(--severity-' + sevClass + ')';
+        tbody += '<td class="taxonomy-cell" style="background:' + bgColor + ';color:' + textColor + '" data-pattern-id="' + p.id + '" role="gridcell" tabindex="0">' +
+          '<div class="taxonomy-cell-id">' + p.id + '</div>' +
+          '<div class="taxonomy-cell-name">' + escHtml(p.name) + '</div>' +
+          '</td>';
+      } else {
+        tbody += '<td class="taxonomy-cell empty"></td>';
+      }
+    });
+    tbody += '</tr>';
+  }
+  tbody += '</tbody>';
+
+  table.innerHTML = thead + tbody;
+
+  // Tooltip and click
+  var tooltip = document.getElementById('taxonomy-tooltip');
+  table.querySelectorAll('.taxonomy-cell:not(.empty)').forEach(function(cell) {
+    var patId = cell.getAttribute('data-pattern-id');
+    var pat = allPatterns.find(function(p) { return p.id === patId; });
+    if (!pat) return;
+
+    cell.addEventListener('mouseenter', function(e) {
+      tooltip.querySelector('.taxonomy-tooltip-id').textContent = pat.id;
+      tooltip.querySelector('.taxonomy-tooltip-id').style.color = 'var(--domain-' + pat.domain + ')';
+      tooltip.querySelector('.taxonomy-tooltip-name').textContent = pat.name;
+      var sevClass = normalizeSeverity(pat.severity).toLowerCase();
+      tooltip.querySelector('.taxonomy-tooltip-severity').innerHTML = '<span class="severity-badge ' + sevClass + '">' + escHtml(pat.severity) + '</span>';
+      tooltip.querySelector('.taxonomy-tooltip-desc').textContent = pat.what;
+      tooltip.classList.add('visible');
+      positionTooltip(e);
+    });
+    cell.addEventListener('mousemove', positionTooltip);
+    cell.addEventListener('mouseleave', function() { tooltip.classList.remove('visible'); });
+    cell.addEventListener('click', function() { expandPatternById(patId); });
+    cell.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); expandPatternById(patId); } });
+  });
+}
+
+function positionTooltip(e) {
+  var tooltip = document.getElementById('taxonomy-tooltip');
+  var x = e.clientX + 16;
+  var y = e.clientY + 16;
+  if (x + 290 > window.innerWidth) x = e.clientX - 296;
+  if (y + 200 > window.innerHeight) y = e.clientY - 200;
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function buildSeverityLegend() {
+  var legend = document.getElementById('severity-legend');
+  var items = [
+    { label: 'ALARMING', cls: 'alarming' },
+    { label: 'HIGH', cls: 'high' },
+    { label: 'MODERATE', cls: 'moderate' },
+    { label: 'MILD', cls: 'mild' },
+    { label: 'META', cls: 'meta' }
+  ];
+  items.forEach(function(item) {
+    legend.innerHTML += '<div class="legend-item"><div class="legend-swatch" style="background:var(--severity-' + item.cls + ')"></div>' + item.label + '</div>';
+  });
+}
+
+/* Catalog view toggle */
+function switchCatalogView(view) {
+  document.querySelectorAll('.catalog-view-btn').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-catalog-view') === view);
+  });
+  document.getElementById('pattern-cards-view').classList.toggle('active', view === 'cards');
+  document.getElementById('taxonomy-map-view').classList.toggle('active', view === 'map');
+}
+
+document.querySelectorAll('.catalog-view-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    switchCatalogView(this.getAttribute('data-catalog-view'));
+  });
+});
+
+/* ═══════════════════════════════════════════════════
+   SEARCH
+   ═══════════════════════════════════════════════════ */
+document.getElementById('searchInput').addEventListener('input', function() {
+  // Auto-switch to patterns view when searching
+  if (this.value.trim() && currentView !== 'patterns') {
+    switchView('patterns');
+  }
+  filterPatterns();
+});
+
+/* ═══════════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════════ */
+function normalizeSeverity(sev) {
+  var s = sev.toUpperCase();
+  if (s.indexOf('ALARMING') !== -1) return 'ALARMING';
+  if (s === 'HIGH' || s.indexOf('HIGH') !== -1) return 'HIGH';
+  if (s.indexOf('MODERATE') !== -1) return 'MODERATE';
+  if (s.indexOf('MILD') !== -1) return 'MILD';
+  if (s === 'META') return 'META';
+  if (s.indexOf('MEDIUM') !== -1) return 'HIGH';
+  return 'MODERATE';
+}
+
+function escHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+/* ═══════════════════════════════════════════════════
+   EXAMPLES (loaded from examples.json)
+   ═══════════════════════════════════════════════════ */
+var PLATFORM_ICONS = {
+  x: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+  facebook: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>',
+  youtube: '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><polygon fill="#fff" points="9.545,15.568 15.818,12 9.545,8.432"/></svg>',
+  web: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
+};
+
+var PLATFORM_LABELS = { x: 'Post', facebook: 'Post', youtube: 'Video', web: 'Article' };
+
+var VERDICT_MAP = {
+  REJECT: { class: 'verdict-reject', stamp: 'Rejected' },
+  FLAG:   { class: 'verdict-flag',   stamp: 'Flagged' },
+  HEDGE:  { class: 'verdict-hedge',  stamp: 'Hedged' },
+  ENDORSE:{ class: 'verdict-endorse', stamp: 'Endorsed' }
+};
+
+var CLAIM_ICONS = { refuted: '✗', verified: '✓', unverifiable: '?', hedged: '~' };
+
+function renderExampleCard(ex) {
+  var v = VERDICT_MAP[ex.verdict] || VERDICT_MAP.REJECT;
+  var platformIcon = PLATFORM_ICONS[ex.platform] || PLATFORM_ICONS.web;
+  var platformLabel = PLATFORM_LABELS[ex.platform] || 'Source';
+
+  // Claims bar segments
+  var barSegments = '';
+  if (ex.claims.refuted)      barSegments += '<div class="claims-bar-segment refuted" style="flex:' + ex.claims.refuted + '"></div>';
+  if (ex.claims.verified)     barSegments += '<div class="claims-bar-segment verified" style="flex:' + ex.claims.verified + '"></div>';
+  if (ex.claims.unverifiable) barSegments += '<div class="claims-bar-segment unverifiable" style="flex:' + ex.claims.unverifiable + '"></div>';
+
+  // Claims legend
+  var legendItems = '';
+  if (ex.claims.refuted)      legendItems += '<span class="claims-legend-item"><span class="claims-legend-dot refuted"></span>' + ex.claims.refuted + ' Refuted</span>';
+  if (ex.claims.verified)     legendItems += '<span class="claims-legend-item"><span class="claims-legend-dot verified"></span>' + ex.claims.verified + ' Verified</span>';
+  if (ex.claims.unverifiable) legendItems += '<span class="claims-legend-item"><span class="claims-legend-dot unverifiable"></span>' + ex.claims.unverifiable + ' N/A</span>';
+
+  // Patterns tags
+  var patternTags = ex.patterns.map(function(p) { return '<span class="pattern-tag">' + escHtml(p) + '</span>'; }).join('');
+
+  // Claim items (back)
+  var claimRows = ex.claims.items.map(function(c) {
+    var icon = CLAIM_ICONS[c.verdict] || '?';
+    return '<div class="example-claim" data-verdict="' + c.verdict + '">' +
+      '<span class="claim-verdict-icon ' + c.verdict + '">' + icon + '</span>' +
+      '<span class="claim-id">' + escHtml(c.id) + '</span>' +
+      '<span class="claim-text">' + escHtml(c.text) + '</span></div>';
+  }).join('');
+
+  // Claims summary counts (back header)
+  var claimsSummary = '';
+  if (ex.claims.refuted)      claimsSummary += '<span class="claims-count refuted">' + ex.claims.refuted + ' Refuted</span>';
+  if (ex.claims.verified)     claimsSummary += '<span class="claims-count verified">' + ex.claims.verified + ' Verified</span>';
+  if (ex.claims.unverifiable) claimsSummary += '<span class="claims-count unverifiable">' + ex.claims.unverifiable + ' Unverifiable</span>';
+
+  // Full report table rows
+  var reportTableRows = '';
+  if (ex.fullReport && ex.fullReport.claimTable) {
+    reportTableRows = ex.fullReport.claimTable.map(function(r) {
+      return '<tr><td>' + escHtml(r.id) + '</td><td>' + escHtml(r.summary) + '</td><td>' + escHtml(r.isr) + '</td><td>' + escHtml(r.verdict) + '</td></tr>';
+    }).join('');
+  }
+
+  // Critical analysis items
+  var analysisItems = '';
+  if (ex.fullReport && ex.fullReport.criticalAnalysis) {
+    analysisItems = ex.fullReport.criticalAnalysis.map(function(a) { return '<li>' + a + '</li>'; }).join('');
+  }
+
+  // Source credibility paragraphs (contain HTML formatting)
+  var credParagraphs = '';
+  if (ex.fullReport && ex.fullReport.sourceCredibility) {
+    credParagraphs = ex.fullReport.sourceCredibility.map(function(s) { return '<p>' + s + '</p>'; }).join('');
+  }
+
+  // Final verdict (contains HTML formatting)
+  var finalVerdictHtml = (ex.fullReport && ex.fullReport.finalVerdict) ? ex.fullReport.finalVerdict : '';
+
+  // Download filename
+  var downloadName = 'VerbaNullius_' + (ex.reportFile || 'report.md').replace(/\.md$/, '') + '.md';
+
+  return '<div class="example-flip-container" onclick="this.classList.toggle(\'flipped\')">' +
+    '<div class="example-flip-inner">' +
+    // FRONT
+    '<div class="example-front">' +
+      '<div class="front-image-area">' +
+        '<img src="' + escHtml(ex.image) + '" alt="' + escHtml(ex.imageAlt || '') + '" loading="lazy">' +
+        '<div class="verdict-stamp">' + escHtml(v.stamp) + '</div>' +
+      '</div>' +
+      '<div class="front-info">' +
+        '<div class="front-type-badge">' +
+          '<span class="front-type-label">' + escHtml(ex.claimType) + '</span>' +
+          '<span class="front-platform-badge">' + platformIcon + ' ' + escHtml(platformLabel) + '</span>' +
+        '</div>' +
+        '<div class="front-title">' + escHtml(ex.title) + '</div>' +
+        '<div class="front-meta">' +
+          '<div class="front-meta-row"><span class="front-meta-label">Author</span><span class="front-meta-value">' + escHtml(ex.author) + '</span></div>' +
+          '<div class="front-meta-row"><span class="front-meta-label">Date</span><span class="front-meta-value">' + escHtml(ex.datePublished) + '</span></div>' +
+          '<div class="front-meta-row"><span class="front-meta-label">Checked</span><span class="front-meta-value">' + escHtml(ex.dateChecked) + '</span></div>' +
+        '</div>' +
+        '<div class="front-divider"></div>' +
+        '<div class="front-score">' +
+          '<span class="front-score-value">' + escHtml(ex.b2tScore) + '</span>' +
+          '<span class="front-score-label">B2T Trust Score</span>' +
+        '</div>' +
+        '<div>' +
+          '<div class="front-claims-bar">' + barSegments + '</div>' +
+          '<div class="front-claims-legend" style="margin-top:6px">' + legendItems + '</div>' +
+        '</div>' +
+        '<div class="front-divider"></div>' +
+        '<div class="front-patterns">' + patternTags + '</div>' +
+      '</div>' +
+    '</div>' +
+    // BACK
+    '<div class="example-back" data-severity="' + escHtml(ex.severity) + '">' +
+      '<div class="example-card-header">' +
+        '<div class="example-meta">' +
+          '<span class="example-platform-icon" style="width:14px;height:14px;display:inline-flex">' + platformIcon + '</span>' +
+          '<span class="example-author">' + escHtml(ex.author) + '</span>' +
+          '<span class="example-date">' + escHtml(ex.datePublished) + '</span>' +
+          (ex.views ? '<span class="example-views">' + escHtml(ex.views) + '</span>' : '') +
+        '</div>' +
+        '<span class="example-verdict ' + v.class + '">' + escHtml(ex.verdict) + '</span>' +
+      '</div>' +
+      '<blockquote class="example-original">' + escHtml(ex.originalQuote) + '</blockquote>' +
+      '<div class="example-summary"><p>' + escHtml(ex.summary) + '</p></div>' +
+      '<div class="example-claims">' +
+        '<div class="example-claims-header"><span>' + ex.claims.total + ' Claims Analyzed</span><span class="claims-summary">' + claimsSummary + '</span></div>' +
+        claimRows +
+      '</div>' +
+      (ex.keyFinding ? '<div class="example-key-finding">' +
+        '<div class="example-key-finding-label">Key Finding</div>' +
+        '<div class="example-key-finding-grid">' +
+          '<div class="finding-col"><div class="finding-col-label">The study actually says</div><p>' + escHtml(ex.keyFinding.sourceActuallySays) + '</p></div>' +
+          '<div class="finding-col"><div class="finding-col-label">The post claims</div><p>' + escHtml(ex.keyFinding.postClaims) + '</p></div>' +
+        '</div></div>' : '') +
+      '<div class="back-patterns">' + patternTags + '</div>' +
+      '<div class="example-report-actions" onclick="event.stopPropagation()">' +
+        '<details class="example-full-report">' +
+          '<summary>Full M8 Verification Report</summary>' +
+          '<div class="example-report-content">' +
+            (ex.fullReport ? (
+              '<h3>Executive Summary</h3><p>' + escHtml(ex.fullReport.executiveSummary) + '</p>' +
+              '<h3>Claim-Level Breakdown</h3>' +
+              '<table><thead><tr><th>Claim</th><th>Summary</th><th>ISR</th><th>Verdict</th></tr></thead><tbody>' + reportTableRows + '</tbody></table>' +
+              '<h3>Critical Misrepresentation Analysis</h3><ol>' + analysisItems + '</ol>' +
+              '<h3>Source Credibility</h3>' + credParagraphs +
+              '<h3>Final Verdict</h3><p>' + finalVerdictHtml + '</p>'
+            ) : '<p>Full report not available.</p>') +
+          '</div>' +
+        '</details>' +
+        (ex.reportFile ? '<a href="' + escHtml(ex.reportFile) + '" download="' + escHtml(downloadName) + '" class="report-download-link">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+          'Download Full Report (.md)</a>' : '') +
+      '</div>' +
+      '<div class="example-footer">' +
+        '<span class="modules-badge">' + escHtml(ex.modulesUsed) + '</span>' +
+        (ex.sourceUrl ? '<a href="' + escHtml(ex.sourceUrl) + '" target="_blank" rel="noopener noreferrer" class="example-source-link" onclick="event.stopPropagation()">View Original Post ↗</a>' : '') +
+      '</div>' +
+    '</div>' +
+    '</div>' +
+    '<div class="flip-hint">Click card to flip</div>' +
+  '</div>';
+}
+
+(function loadExamples() {
+  var grid = document.getElementById('examples-grid');
+  if (!grid) return;
+  fetch('examples.json')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      grid.innerHTML = data.map(renderExampleCard).join('');
+    })
+    .catch(function(err) {
+      console.error('Failed to load examples:', err);
+      grid.innerHTML = '<div class="placeholder-view" style="grid-column:1/-1"><p>Examples could not be loaded.</p></div>';
+    });
+})();
+
+/* Hash-based routing */
+(function initHashRouting() {
+  function handleHash() {
+    var hash = window.location.hash.replace('#', '');
+    if (hash === 'workflow' || hash === 'patterns' || hash === 'overview' || hash === 'examples' || hash === 'about') {
+      switchView(hash);
+    }
+  }
+  window.addEventListener('hashchange', handleHash);
+  handleHash();
+})();
+</script>
+</body>
+</html>
